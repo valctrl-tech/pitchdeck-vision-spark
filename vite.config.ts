@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({
-  base: '/',
+  base: '/pitchdeck-vision-spark/',
   server: {
     port: 5173,
     host: true, // Listen on all addresses
@@ -20,8 +20,7 @@ export default defineConfig(({ command, mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' && componentTagger() : null,
   ].filter(Boolean),
   resolve: {
     alias: {
