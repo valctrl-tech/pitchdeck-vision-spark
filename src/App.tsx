@@ -14,7 +14,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename="/valctrl-page-spark">
+      <BrowserRouter basename="/pitchdeck-vision-spark">
         <div className="min-h-screen bg-[#1A1F2C]">
           <Navbar />
           <Routes>
