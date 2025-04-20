@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://valctrl-tech.github.io/valctrl-page-spark/",
+  "homepage": "https://valctrl-tech.github.io/pitchdeck-vision-spark/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

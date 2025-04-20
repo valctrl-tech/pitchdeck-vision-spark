@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({
-  base: '/valctrl-page-spark/',
+  base: '/pitchdeck-vision-spark/',
   server: {
     port: 5173,
     host: true, // Listen on all addresses
