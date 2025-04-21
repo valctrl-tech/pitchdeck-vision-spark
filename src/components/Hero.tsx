@@ -75,7 +75,7 @@ const Hero = () => {
                 </h1>
                 
                 <p className="text-xl text-blue-200">
-                  Revolutionizing value control and management through innovative solutions
+                  Revolutionizing Financial Data Analysis and Modeling using Breakthrough AI Capabilities
                 </p>
                 
                 <div className="flex justify-center lg:justify-start mt-4">

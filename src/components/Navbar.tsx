@@ -70,10 +70,7 @@ const Navbar = () => {
               ValCtrl
             </Link>
             
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="https://valctrl.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-200 transition-colors">
-                Home
-              </a>
+            <div className="hidden md:flex items-center">
               <Button 
                 className="bg-gradient-to-r from-[#001a35] to-[#004080] hover:from-[#002a55] hover:to-[#0055aa] border border-blue-700 text-white"
                 onClick={() => setShowContactModal(true)}

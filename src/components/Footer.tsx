@@ -8,9 +8,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-white">ValCtrl</h3>
-            <p className="text-[#94A3B8]">
-              Revolutionizing value control and management through innovative solutions.
-            </p>
+            <div className="text-sm text-gray-400">
+              <p>
+                Revolutionizing Financial Data Analysis and Modeling using Breakthrough AI Capabilities.
+              </p>
+            </div>
           </div>
 
           <div>
