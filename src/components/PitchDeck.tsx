@@ -69,12 +69,12 @@ const getAllSlides = (): SlideInfo[] => {
 const Slide1 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     {/* Background feather image */}
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
+    <div className="absolute right-0 top-0 bottom-0 w-[45%] h-full">
       <img 
         src="/images/feather1.png"
         alt=""
         aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
+        className="w-full h-full object-cover object-center animate-fadeIn delay-200 opacity-75"
         style={{
           filter: 'brightness(0.85) contrast(1.05)'
         }}
@@ -92,8 +92,8 @@ const Slide1 = () => (
       </div>
 
       {/* Main title section */}
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
+      <div className="space-y-4 mb-10">
+        <h1 className="text-[5rem] leading-none font-bold tracking-tight">
           <span className="text-white">ONLY </span>
           <span className="text-[#00E5E5]">10</span>
           <span className="text-white"> SLIDES</span>
@@ -103,14 +103,14 @@ const Slide1 = () => (
           <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">YOU NEED IN A</h2>
         </div>
         
-        <h1 className="text-[7rem] leading-none font-bold text-white">
+        <h1 className="text-[6rem] leading-none font-bold text-white">
           PITCH
         </h1>
       </div>
 
       {/* Bottom text sections with divider */}
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
+      <div className="mt-4 grid grid-cols-2 gap-8 pr-[45%]">
+        <div className="text-base space-y-3">
           <p className="text-white">
             The purpose of a pitch is to stimulate interest,
             not to cover every aspect of your startup and
@@ -122,13 +122,12 @@ const Slide1 = () => (
           </p>
         </div>
 
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
+        <div className="text-base border-l border-[#00E5E5] pl-8">
           <p className="text-white">
             Thus, the recommended number of slides for a pitch
             is ten. This impossibly low number forces you to
-            concentrate on the absolute essentials. You can add a
-            few more, but you should never exceed fifteen slides --
-            <span className="text-[#00E5E5]"> the more slides you need, the less compelling your idea.</span>
+            concentrate on the absolute essentials.
+            <span className="text-[#00E5E5]"> The more slides you need, the less compelling your idea.</span>
           </p>
         </div>
       </div>
@@ -879,12 +878,12 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
           </Button>
         </div>
 
-        <div className="flex-1 relative">
+        <div className="flex-1 relative overflow-y-auto" style={{ height: 'calc(100vh - 180px)' }}>
           {renderSlide(currentSlide)}
         </div>
 
-        <div className="flex flex-col items-center gap-4 p-4 border-t border-[#00E5E5]/20">
-          <div className="flex items-center justify-between w-full">
+        <div className="flex flex-col items-center gap-4 p-4 border-t border-[#00E5E5]/20 sticky bottom-0 bg-black z-10">
+          <div className="flex items-center justify-between w-full max-w-3xl mx-auto">
             <Button
               variant="ghost"
               onClick={prevSlide}

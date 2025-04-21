@@ -20,13 +20,13 @@ const features = [
 
 const Features = () => {
   return (
-    <section className="py-24 bg-[#222632]">
+    <section className="py-24 bg-gradient-to-b from-[#1E293B] to-[#0F172A]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-[#E5DEFF] mb-4">
+          <h2 className="text-4xl font-bold text-white mb-4">
             Powerful Features
           </h2>
-          <p className="text-[#8E9196] text-lg max-w-2xl mx-auto">
+          <p className="text-[#94A3B8] text-lg max-w-2xl mx-auto">
             Discover the tools that make <span className="text-white">ValCtrl</span> the leading choice for value control management
           </p>
         </div>
@@ -35,18 +35,18 @@ const Features = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-8 rounded-2xl bg-[#2A2F3D] border border-[#7E69AB]/20 hover:border-[#9b87f5]/50 transition-all hover:scale-105 duration-300"
+              className="group relative p-8 rounded-2xl bg-[#0F172A] border border-indigo-500/20 hover:border-indigo-400/50 transition-all hover:scale-105 duration-300"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="p-3 rounded-lg bg-[#1A1F2C] text-[#9b87f5]">
+                <div className="p-3 rounded-lg bg-[#1E293B] text-indigo-400">
                   {feature.icon}
                 </div>
-                <ArrowUpRight className="h-6 w-6 text-[#7E69AB] group-hover:text-[#9b87f5] transition-colors" />
+                <ArrowUpRight className="h-6 w-6 text-indigo-300 group-hover:text-indigo-400 transition-colors" />
               </div>
-              <h3 className="text-xl font-semibold text-[#E5DEFF] mb-2">
+              <h3 className="text-xl font-semibold text-white mb-2">
                 {feature.title}
               </h3>
-              <p className="text-[#8E9196]">
+              <p className="text-[#94A3B8]">
                 {feature.description}
               </p>
             </div>
