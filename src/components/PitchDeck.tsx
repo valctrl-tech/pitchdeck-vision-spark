@@ -17,38 +17,44 @@ interface SlideInfo {
 const slideStructure = {
   topics: [
     {
+      title: "Introduction",
+      slides: [
+        { id: 2, title: "Pitch Framework" }
+      ]
+    },
+    {
       title: "What We Do?",
       slides: [
-        { id: 2, title: "Our Solution" },
-        { id: 3, title: "Key Features" }
+        { id: 3, title: "Our Solution" },
+        { id: 4, title: "Key Features" }
       ]
     },
     {
       title: "Market Opportunity",
       slides: [
-        { id: 4, title: "Target Market" },
-        { id: 5, title: "Market Size" }
+        { id: 5, title: "Target Market" },
+        { id: 6, title: "Market Size" }
       ]
     },
     {
       title: "Business Model",
       slides: [
-        { id: 6, title: "Revenue Streams" },
-        { id: 7, title: "Pricing Strategy" }
+        { id: 7, title: "Revenue Streams" },
+        { id: 8, title: "Pricing Strategy" }
       ]
     },
     {
       title: "Traction",
       slides: [
-        { id: 8, title: "Current Progress" },
-        { id: 9, title: "Milestones" }
+        { id: 9, title: "Current Progress" },
+        { id: 10, title: "Milestones" }
       ]
     },
     {
       title: "Next Steps",
       slides: [
-        { id: 10, title: "Roadmap" },
-        { id: 11, title: "Investment Ask" }
+        { id: 11, title: "Roadmap" },
+        { id: 12, title: "Investment Ask" }
       ]
     }
   ]
@@ -56,7 +62,7 @@ const slideStructure = {
 
 // Get all slides in a flat array
 const getAllSlides = (): SlideInfo[] => {
-  const slides: SlideInfo[] = [{ id: 1, title: "Introduction", parentTopic: "Start" }];
+  const slides: SlideInfo[] = [{ id: 1, title: "Cover", parentTopic: "Start" }];
   slideStructure.topics.forEach(topic => {
     topic.slides.forEach(slide => {
       slides.push({ ...slide, parentTopic: topic.title });
@@ -66,6 +72,21 @@ const getAllSlides = (): SlideInfo[] => {
 };
 
 // Slide Components
+const SlideIntro = () => (
+  <div className="w-full h-full bg-black relative overflow-hidden">
+    <img 
+      src="/images/slide1.png"
+      alt="ValCtrl Cover Slide" 
+      className="absolute inset-0 w-full h-full object-contain"
+      style={{
+        imageRendering: 'crisp-edges',
+        maxWidth: '100%',
+        maxHeight: '100%'
+      }}
+    />
+  </div>
+);
+
 const Slide1 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     {/* Background feather image */}
@@ -752,8 +773,9 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
   const [isSelectingSlide, setIsSelectingSlide] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  
   const allSlides = getAllSlides();
-  const totalSlides = allSlides.length;
+  const totalSlides = allSlides.length; // This should now be 12 with the new cover slide
 
   const handleSlideInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -809,17 +831,18 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
 
   const renderSlide = (slideNumber: number) => {
     switch(slideNumber) {
-      case 1: return <Slide1 />;
-      case 2: return <Slide2 />;
-      case 3: return <Slide3 />;
-      case 4: return <Slide4 />;
-      case 5: return <Slide5 />;
-      case 6: return <Slide6 />;
-      case 7: return <Slide7 />;
-      case 8: return <Slide8 />;
-      case 9: return <Slide9 />;
-      case 10: return <Slide10 />;
-      case 11: return <Slide11 />;
+      case 1: return <SlideIntro />;
+      case 2: return <Slide1 />;
+      case 3: return <Slide2 />;
+      case 4: return <Slide3 />;
+      case 5: return <Slide4 />;
+      case 6: return <Slide5 />;
+      case 7: return <Slide6 />;
+      case 8: return <Slide7 />;
+      case 9: return <Slide8 />;
+      case 10: return <Slide9 />;
+      case 11: return <Slide10 />;
+      case 12: return <Slide11 />;
       default: return <div className="text-white">Slide {slideNumber} content coming soon</div>;
     }
   };
@@ -836,7 +859,7 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
             className={`cursor-pointer transition-colors ${currentSlide === 1 ? 'text-[#00E5E5]' : 'text-white/70 hover:text-white'}`}
             onClick={() => goToSlide(1)}
           >
-            Introduction
+            Cover
           </div>
 
           {/* Topics and their slides */}
