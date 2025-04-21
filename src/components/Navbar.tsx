@@ -8,23 +8,57 @@ import { X } from "lucide-react";
 
 const Navbar = () => {
   const [showContactModal, setShowContactModal] = useState(false);
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    message: "",
+    subject: "Contact Form Submission"
+  });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you would send this data to your backend
-    console.log({ email, message });
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setError("");
     
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setSubmitted(false);
-      setEmail("");
-      setMessage("");
-      setShowContactModal(false);
-    }, 3000);
+    try {
+      const response = await fetch("https://formspree.io/f/mzzrpkvp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      if (response.ok) {
+        setSubmitted(true);
+        
+        // Reset form after 5 seconds
+        setTimeout(() => {
+          setSubmitted(false);
+          setFormData({
+            email: "",
+            message: "",
+            subject: "Contact Form Submission"
+          });
+          setShowContactModal(false);
+        }, 5000);
+      } else {
+        const responseData = await response.json();
+        setError(responseData.error || "Form submission failed. Please try again.");
+      }
+    } catch (err) {
+      setError("Network error. Please check your connection and try again.");
+      console.error("Contact form error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -72,6 +106,12 @@ const Navbar = () => {
             
             {!submitted ? (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <div className="bg-red-900/30 border border-red-500/50 text-red-200 p-3 rounded-md text-sm">
+                    {error}
+                  </div>
+                )}
+                
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-1">
                     Email Address
@@ -79,8 +119,8 @@ const Navbar = () => {
                   <Input 
                     id="email"
                     type="email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formData.email}
+                    onChange={handleInputChange}
                     required
                     placeholder="your@email.com"
                     className="bg-[#001a35]/50 border-blue-900/30 text-white placeholder:text-gray-400"
@@ -93,8 +133,8 @@ const Navbar = () => {
                   </label>
                   <Textarea
                     id="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    value={formData.message}
+                    onChange={handleInputChange}
                     required
                     placeholder="How can we help you?"
                     className="bg-[#001a35]/50 border-blue-900/30 text-white placeholder:text-gray-400 min-h-[120px]"
@@ -103,9 +143,10 @@ const Navbar = () => {
                 
                 <Button 
                   type="submit"
+                  disabled={isSubmitting}
                   className="w-full bg-gradient-to-r from-[#001a35] to-[#004080] hover:from-[#002a55] hover:to-[#0055aa] border border-blue-700 text-white py-6"
                 >
-                  Submit
+                  {isSubmitting ? "Sending..." : "Submit Message"}
                 </Button>
               </form>
             ) : (
