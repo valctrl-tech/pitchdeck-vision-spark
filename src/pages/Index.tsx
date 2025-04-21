@@ -10,7 +10,7 @@ const Index = () => {
     <div className="min-h-screen bg-[#1A1F2C] text-[#FFFFFF]">
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12 text-center">
-        <h1 className="mb-6 text-5xl font-bold text-[#9b87f5]">
+        <h1 className="mb-6 text-5xl font-bold text-white">
           ValCtrl Pitch Deck Areas
         </h1>
         <p className="mx-auto mb-8 max-w-2xl text-lg text-[#8E9196]">
@@ -49,7 +49,7 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center">
           <h2 className="mb-6 text-3xl font-semibold text-[#E5DEFF]">Contact</h2>
           <p className="mx-auto mb-8 max-w-2xl text-lg text-[#8E9196]">
-            Ready to learn more about ValCtrl? Get in touch with us today.
+            Ready to learn more about <span className="text-white">ValCtrl</span>? Get in touch with us today.
           </p>
           <Button 
             className="bg-[#9b87f5] px-8 py-4 text-white hover:bg-[#7E69AB] transition-colors"

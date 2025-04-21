@@ -27,7 +27,7 @@ const Features = () => {
             Powerful Features
           </h2>
           <p className="text-[#8E9196] text-lg max-w-2xl mx-auto">
-            Discover the tools that make ValCtrl the leading choice for value control management
+            Discover the tools that make <span className="text-white">ValCtrl</span> the leading choice for value control management
           </p>
         </div>
 

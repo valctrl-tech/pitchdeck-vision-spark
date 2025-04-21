@@ -7,7 +7,7 @@ const Navbar = () => {
     <nav className="fixed w-full bg-[#1A1F2C]/80 backdrop-blur-lg z-50 border-b border-[#7E69AB]/20">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-[#9b87f5]">
+          <Link to="/" className="text-2xl font-bold text-white">
             ValCtrl
           </Link>
           

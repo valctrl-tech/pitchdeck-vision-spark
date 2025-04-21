@@ -16,7 +16,7 @@ const Hero = () => {
         <div className="relative z-10 container mx-auto px-4 text-center">
           <div className="space-y-6 max-w-4xl mx-auto">
             <h1 className="text-6xl md:text-7xl font-bold">
-              <span className="text-[#9b87f5]">ValCtrl</span>
+              <span className="text-white">ValCtrl</span>
               <span className="text-white"> Pitch Deck</span>
             </h1>
             
