@@ -12,22 +12,49 @@ const Hero = () => {
     company: ""
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    setIsSubmitted(true);
+    setIsSubmitting(true);
     
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: "", email: "", company: "" });
-    }, 3000);
+    try {
+      // Replace "YOUR_FORM_ID" with your actual Formspree form ID
+      const response = await fetch("https://formspree.io/f/YOUR_FORM_ID", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          subject: "Investment Inquiry from Website"
+        }),
+      });
+      
+      if (response.ok) {
+        setIsSubmitted(true);
+        // Reset form after successful submission
+        setTimeout(() => {
+          setIsSubmitted(false);
+          setFormData({ name: "", email: "", company: "" });
+        }, 5000);
+      } else {
+        console.error("Form submission failed");
+        alert("Form submission failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -113,9 +140,10 @@ const Hero = () => {
                       
                       <Button 
                         type="submit"
+                        disabled={isSubmitting}
                         className="w-full bg-[#00C853] hover:bg-[#00B04A] text-black font-medium h-14 text-lg rounded-md transition-colors mt-2"
                       >
-                        Submit Inquiry
+                        {isSubmitting ? "Submitting..." : "Submit Inquiry"}
                       </Button>
                     </form>
                   </>
