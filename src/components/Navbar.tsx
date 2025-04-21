@@ -21,6 +21,9 @@ const Navbar = () => {
             <Link to="/about" className="text-[#E5DEFF] hover:text-[#9b87f5] transition-colors">
               About
             </Link>
+            <Link to="/pitch-deck" className="text-[#E5DEFF] hover:text-[#9b87f5] transition-colors">
+              Pitch Deck
+            </Link>
             <Button className="bg-[#9b87f5] hover:bg-[#7E69AB]">
               Get Started
             </Button>

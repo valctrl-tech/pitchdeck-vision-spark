@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import NotFound from "./pages/NotFound";
+import { PDFViewer } from "@/components/PDFViewer";
 
 const App = () => (
   <TooltipProvider>
@@ -15,6 +16,7 @@ const App = () => (
         <Navbar />
         <Routes>
           <Route path="/" element={<Hero />} />
+          <Route path="/pitch-deck" element={<PDFViewer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
