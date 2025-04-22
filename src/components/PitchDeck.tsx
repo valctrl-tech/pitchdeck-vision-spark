@@ -12,6 +12,7 @@ interface SlideInfo {
   id: number;
   title: string;
   parentTopic: string;
+  imagePath: string;
 }
 
 const slideStructure = {
@@ -19,42 +20,97 @@ const slideStructure = {
     {
       title: "Introduction",
       slides: [
-        { id: 2, title: "Pitch Framework" }
+        { id: 1, title: "Cover", imagePath: "/images/slide1.png" },
+        { id: 2, title: "Overview", imagePath: "/images/solution.png" },
+        { id: 3, title: "Executive Summary", imagePath: "/images/features.png" }
       ]
     },
     {
-      title: "What We Do?",
+      title: "Problem & Solution",
       slides: [
-        { id: 3, title: "Our Solution" },
-        { id: 4, title: "Key Features" }
+        { id: 4, title: "Market Problem", imagePath: "/images/market.png" },
+        { id: 5, title: "Our Solution", imagePath: "/images/solution.png" },
+        { id: 6, title: "Value Proposition", imagePath: "/images/features.png" }
       ]
     },
     {
-      title: "Market Opportunity",
+      title: "Market Analysis",
       slides: [
-        { id: 5, title: "Target Market" },
-        { id: 6, title: "Market Size" }
+        { id: 7, title: "Market Overview", imagePath: "/images/market.png" },
+        { id: 8, title: "Market Size", imagePath: "/images/size.png" },
+        { id: 9, title: "Market Trends", imagePath: "/images/market.png" }
+      ]
+    },
+    {
+      title: "Product",
+      slides: [
+        { id: 10, title: "Product Features", imagePath: "/images/features.png" },
+        { id: 11, title: "Technology", imagePath: "/images/solution.png" },
+        { id: 12, title: "Product Roadmap", imagePath: "/images/roadmap.png" }
       ]
     },
     {
       title: "Business Model",
       slides: [
-        { id: 7, title: "Revenue Streams" },
-        { id: 8, title: "Pricing Strategy" }
+        { id: 13, title: "Revenue Model", imagePath: "/images/revenue.png" },
+        { id: 14, title: "Pricing Strategy", imagePath: "/images/pricing.png" },
+        { id: 15, title: "Go-to-Market", imagePath: "/images/market.png" }
+      ]
+    },
+    {
+      title: "Competition",
+      slides: [
+        { id: 16, title: "Competitive Landscape", imagePath: "/images/market.png" },
+        { id: 17, title: "Competitive Advantages", imagePath: "/images/features.png" },
+        { id: 18, title: "Market Position", imagePath: "/images/market.png" }
       ]
     },
     {
       title: "Traction",
       slides: [
-        { id: 9, title: "Current Progress" },
-        { id: 10, title: "Milestones" }
+        { id: 19, title: "Current Progress", imagePath: "/images/progress.png" },
+        { id: 20, title: "Key Metrics", imagePath: "/images/milestones.png" },
+        { id: 21, title: "Case Studies", imagePath: "/images/progress.png" }
       ]
     },
     {
-      title: "Next Steps",
+      title: "Team",
       slides: [
-        { id: 11, title: "Roadmap" },
-        { id: 12, title: "Investment Ask" }
+        { id: 22, title: "Leadership", imagePath: "/images/progress.png" },
+        { id: 23, title: "Advisory Board", imagePath: "/images/milestones.png" },
+        { id: 24, title: "Key Hires", imagePath: "/images/progress.png" }
+      ]
+    },
+    {
+      title: "Financial Overview",
+      slides: [
+        { id: 25, title: "Financial Metrics", imagePath: "/images/revenue.png" },
+        { id: 26, title: "Projections", imagePath: "/images/pricing.png" },
+        { id: 27, title: "Unit Economics", imagePath: "/images/revenue.png" }
+      ]
+    },
+    {
+      title: "Growth Strategy",
+      slides: [
+        { id: 28, title: "Growth Plans", imagePath: "/images/roadmap.png" },
+        { id: 29, title: "Marketing Strategy", imagePath: "/images/market.png" },
+        { id: 30, title: "Expansion Plans", imagePath: "/images/progress.png" }
+      ]
+    },
+    {
+      title: "Investment",
+      slides: [
+        { id: 31, title: "Investment Ask", imagePath: "/images/investment.png" },
+        { id: 32, title: "Use of Funds", imagePath: "/images/revenue.png" },
+        { id: 33, title: "Funding History", imagePath: "/images/milestones.png" }
+      ]
+    },
+    {
+      title: "Future Vision",
+      slides: [
+        { id: 34, title: "Vision & Mission", imagePath: "/images/slide1.png" },
+        { id: 35, title: "Future Roadmap", imagePath: "/images/roadmap.png" },
+        { id: 36, title: "Call to Action", imagePath: "/images/investment.png" }
       ]
     }
   ]
@@ -62,7 +118,7 @@ const slideStructure = {
 
 // Get all slides in a flat array
 const getAllSlides = (): SlideInfo[] => {
-  const slides: SlideInfo[] = [{ id: 1, title: "Cover", parentTopic: "Start" }];
+  const slides: SlideInfo[] = [];
   slideStructure.topics.forEach(topic => {
     topic.slides.forEach(slide => {
       slides.push({ ...slide, parentTopic: topic.title });
@@ -71,62 +127,11 @@ const getAllSlides = (): SlideInfo[] => {
   return slides;
 };
 
-// Create a reusable image component that handles errors
-const SafeImage = ({ src, alt, className, style, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => {
-  const [hasError, setHasError] = useState(false);
-  
-  // Extract the image name from the src path to create unique gradients
-  const getGradient = () => {
-    if (!src) return 'from-[#001f3f] to-black';
-    
-    const fileName = src.split('/').pop()?.split('.')[0] || '';
-    
-    // Create different gradients based on the image name
-    const gradients: Record<string, string> = {
-      'solution': 'from-[#001a35] to-[#004080]',
-      'features': 'from-[#002a55] to-[#004080]',
-      'market': 'from-[#003366] to-[#001f3f]',
-      'size': 'from-[#002244] to-[#000033]',
-      'revenue': 'from-[#001a35] to-[#003366]',
-      'pricing': 'from-[#002244] to-[#001a35]',
-      'progress': 'from-[#003366] to-[#002244]',
-      'milestones': 'from-[#001f3f] to-[#000033]',
-      'roadmap': 'from-[#001a35] to-[#001f3f]',
-      'investment': 'from-[#003366] to-[#001a35]',
-      'default': 'from-[#001f3f] to-black'
-    };
-    
-    return gradients[fileName] || gradients.default;
-  };
-  
-  return hasError ? (
-    <div 
-      className={`bg-gradient-to-br ${getGradient()} flex justify-center items-center ${className}`}
-      style={{ ...style }}
-      {...props}
-    >
-      <div className="w-1/2 h-1/2 border border-[#00E5E5]/30 flex items-center justify-center rounded-md">
-        <div className="text-[#00E5E5] text-lg">Image not available</div>
-      </div>
-    </div>
-  ) : (
-    <img 
-      src={src}
-      alt={alt}
-      className={className}
-      style={style}
-      onError={() => setHasError(true)}
-      {...props}
-    />
-  );
-};
-
-// Slide Components
-const SlideIntro = () => (
+const Slide = ({ imagePath }: { imagePath: string }) => (
   <div className="w-full h-full bg-black relative overflow-hidden">
-    <SafeImage 
-      src="/images/slide1.png"
-      alt="ValCtrl Cover Slide" 
+    <img 
+      src={imagePath}
+      alt="Slide" 
       className="absolute inset-0 w-full h-full object-contain"
       style={{
         imageRendering: 'crisp-edges',
@@ -137,720 +142,14 @@ const SlideIntro = () => (
   </div>
 );
 
-const Slide1 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    {/* Background feather image */}
-    <div className="absolute right-0 top-0 bottom-0 w-[45%] h-full">
-      <SafeImage 
-        src="/images/feather1.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-center animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    {/* Main content container */}
-    <div className="relative w-full h-full flex flex-col p-16">
-      {/* THE text */}
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          THE
-        </div>
-      </div>
-
-      {/* Main title section */}
-      <div className="space-y-4 mb-10">
-        <h1 className="text-[5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">ONLY </span>
-          <span className="text-[#00E5E5]">10</span>
-          <span className="text-white"> SLIDES</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">YOU NEED IN A</h2>
-        </div>
-        
-        <h1 className="text-[6rem] leading-none font-bold text-white">
-          PITCH
-        </h1>
-      </div>
-
-      {/* Bottom text sections with divider */}
-      <div className="mt-4 grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-base space-y-3">
-          <p className="text-white">
-            The purpose of a pitch is to stimulate interest,
-            not to cover every aspect of your startup and
-            bludgeon your audience into submission.
-          </p>
-          <p className="text-[#00E5E5]">
-            your objective is to generate enough interest
-            to get a second meeting.
-          </p>
-        </div>
-
-        <div className="text-base border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            Thus, the recommended number of slides for a pitch
-            is ten. This impossibly low number forces you to
-            concentrate on the absolute essentials.
-            <span className="text-[#00E5E5]"> The more slides you need, the less compelling your idea.</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide2 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/solution.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          WHAT WE DO
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">OUR </span>
-          <span className="text-[#00E5E5]">SOLUTION</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">INNOVATION MEETS SIMPLICITY</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            We've developed a groundbreaking platform that
-            revolutionizes how businesses interact with their
-            data, making complex analytics accessible to everyone.
-          </p>
-          <p className="text-[#00E5E5]">
-            Our AI-powered solution transforms raw data into
-            actionable insights in real-time.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            By combining cutting-edge machine learning with
-            intuitive design, we've created a solution that's
-            both powerful and easy to use. Our platform reduces
-            analysis time by 80% while increasing accuracy by 95%.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide3 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/features.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          CAPABILITIES
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">KEY </span>
-          <span className="text-[#00E5E5]">FEATURES</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">WHAT SETS US APART</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            • Real-time data processing
-            • Advanced AI analytics
-            • Intuitive dashboard
-            • Automated reporting
-          </p>
-          <p className="text-[#00E5E5]">
-            Our features are designed to maximize efficiency
-            while minimizing complexity.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            Each feature has been carefully crafted based on
-            extensive market research and user feedback. We
-            prioritize features that deliver immediate value
-            while maintaining scalability for future growth.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide4 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/market.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          MARKET OPPORTUNITY
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">TARGET </span>
-          <span className="text-[#00E5E5]">MARKET</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">WHO WE SERVE</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            Our primary market consists of mid to large-sized
-            enterprises in the following sectors:
-            • Financial Services
-            • Healthcare
-            • E-commerce
-            • Manufacturing
-          </p>
-          <p className="text-[#00E5E5]">
-            These sectors represent a combined
-            market value of $50B annually.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            Our ideal customer is a data-driven organization
-            looking to optimize their operations through
-            advanced analytics. They typically have:
-            • 100+ employees
-            • $10M+ annual revenue
-            • Multiple data sources
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide5 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/size.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          OPPORTUNITY
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">MARKET </span>
-          <span className="text-[#00E5E5]">SIZE</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">THE POTENTIAL</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            Total Addressable Market (TAM):
-            • Global: $100B
-            • North America: $40B
-            • Europe: $35B
-            • Asia: $25B
-          </p>
-          <p className="text-[#00E5E5]">
-            Projected market growth: 25% CAGR
-            over the next 5 years.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            Our initial focus is on the North American
-            market, with a serviceable obtainable market
-            (SOM) of $5B. We project capturing 10% of
-            this market within 3 years of launch.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide6 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/revenue.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          BUSINESS MODEL
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">REVENUE </span>
-          <span className="text-[#00E5E5]">STREAMS</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">HOW WE MONETIZE</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            Primary Revenue Streams:
-            • Subscription Plans
-            • Enterprise Licensing
-            • Professional Services
-            • API Access
-          </p>
-          <p className="text-[#00E5E5]">
-            90% recurring revenue with
-            95% customer retention rate.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            Our subscription model ensures steady
-            revenue growth while professional services
-            and API access provide additional high-margin
-            revenue opportunities.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide7 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/pricing.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          MONETIZATION
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">PRICING </span>
-          <span className="text-[#00E5E5]">STRATEGY</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">VALUE-BASED PRICING</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            Tiered Pricing Structure:
-            • Starter: $499/month
-            • Professional: $999/month
-            • Enterprise: Custom
-          </p>
-          <p className="text-[#00E5E5]">
-            Average contract value: $50,000
-            per year per enterprise client.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            Our pricing strategy aligns with customer
-            value creation, offering flexible plans that
-            scale with usage and feature requirements.
-            Enterprise deals include dedicated support
-            and customization options.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide8 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/progress.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          TRACTION
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">CURRENT </span>
-          <span className="text-[#00E5E5]">PROGRESS</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">WHERE WE ARE NOW</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            Key Metrics:
-            • 50+ Enterprise Clients
-            • $2M ARR
-            • 150% YoY Growth
-            • 98% Customer Satisfaction
-          </p>
-          <p className="text-[#00E5E5]">
-            Currently processing over 1 billion
-            data points monthly.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            We've achieved product-market fit with
-            strong customer validation. Our platform
-            has been battle-tested across various
-            industries with consistent positive feedback.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide9 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/milestones.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          ACHIEVEMENTS
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">KEY </span>
-          <span className="text-[#00E5E5]">MILESTONES</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">OUR JOURNEY</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            Major Achievements:
-            • Series A Funding: $10M
-            • Patents Granted: 3
-            • Industry Awards: 5
-            • Team Growth: 50+ people
-          </p>
-          <p className="text-[#00E5E5]">
-            Named "Top 10 AI Startups to Watch"
-            by leading industry analysts.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            Our rapid growth and industry recognition
-            validate our approach and technology.
-            Strategic partnerships with major tech
-            companies have accelerated our market
-            penetration.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide10 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/roadmap.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          NEXT STEPS
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">FUTURE </span>
-          <span className="text-[#00E5E5]">ROADMAP</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">WHERE WE'RE HEADING</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            Next 12 Months:
-            • Global Market Expansion
-            • New Product Features
-            • Strategic Partnerships
-            • Team Expansion
-          </p>
-          <p className="text-[#00E5E5]">
-            Targeting 300% growth in
-            enterprise customers.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            Our roadmap focuses on scaling operations,
-            enhancing product capabilities, and
-            expanding market presence. Key initiatives
-            include AI advancement and integration
-            with major enterprise systems.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Slide11 = () => (
-  <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
-    <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <SafeImage 
-        src="/images/investment.png"
-        alt=""
-        aria-hidden="true"
-        className="w-full h-full object-cover object-right animate-fadeIn delay-200 opacity-75"
-        style={{
-          filter: 'brightness(0.85) contrast(1.05)'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/30 to-black"></div>
-    </div>
-
-    <div className="relative w-full h-full flex flex-col p-16">
-      <div className="mb-4">
-        <div className="inline-block text-xl font-mono border border-[#00E5E5] px-3 py-1 text-[#00E5E5]">
-          FUNDING
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-16">
-        <h1 className="text-[5.5rem] leading-none font-bold tracking-tight">
-          <span className="text-white">INVESTMENT </span>
-          <span className="text-[#00E5E5]">ASK</span>
-        </h1>
-        
-        <div className="border border-[#00E5E5] inline-block">
-          <h2 className="text-2xl tracking-[0.3em] text-white px-4 py-2">SCALING FOR SUCCESS</h2>
-        </div>
-      </div>
-
-      <div className="mt-auto grid grid-cols-2 gap-8 pr-[45%]">
-        <div className="text-lg space-y-4">
-          <p className="text-white">
-            Seeking $20M Series B:
-            • Market Expansion: 40%
-            • R&D: 30%
-            • Team Growth: 20%
-            • Operations: 10%
-          </p>
-          <p className="text-[#00E5E5]">
-            18-month runway to achieve
-            key growth milestones.
-          </p>
-        </div>
-
-        <div className="text-lg border-l border-[#00E5E5] pl-8">
-          <p className="text-white">
-            This investment will accelerate our growth
-            and cement our position as the market
-            leader. We project reaching $50M ARR
-            within 24 months of funding.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [isSelectingSlide, setIsSelectingSlide] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [mounted, setMounted] = useState(false);
   
   const allSlides = getAllSlides();
   const totalSlides = allSlides.length;
-
-  // Ensure component is fully mounted before rendering
-  useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
-
-  // Add debug logging
-  useEffect(() => {
-    console.log("PitchDeck visibility:", isVisible);
-  }, [isVisible]);
-
-  // Prevent body scrolling when pitch deck is visible
-  useEffect(() => {
-    if (isVisible) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isVisible]);
 
   const handleSlideInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -902,47 +201,15 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isVisible, onClose]);
+  }, [isVisible]);
 
-  const renderSlide = (slideNumber: number) => {
-    switch(slideNumber) {
-      case 1: return <SlideIntro />;
-      case 2: return <Slide1 />;
-      case 3: return <Slide2 />;
-      case 4: return <Slide3 />;
-      case 5: return <Slide4 />;
-      case 6: return <Slide5 />;
-      case 7: return <Slide6 />;
-      case 8: return <Slide7 />;
-      case 9: return <Slide8 />;
-      case 10: return <Slide9 />;
-      case 11: return <Slide10 />;
-      case 12: return <Slide11 />;
-      default: return <div className="text-white">Slide {slideNumber} content coming soon</div>;
-    }
-  };
-  
-  // Prevent rendering if not visible or not mounted
-  if (!isVisible || !mounted) return null;
-
-  // Handle container click to prevent closing when clicking inside
-  const handleContainerClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
+  if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex bg-black/90 backdrop-blur-sm" onClick={handleContainerClick}>
+    <div className="fixed inset-0 z-50 flex bg-black/90 backdrop-blur-sm">
       {/* Navigation Sidebar */}
       <div className="w-64 h-full bg-black border-r border-[#00E5E5]/20 p-6 overflow-y-auto">
         <div className="space-y-6">
-          {/* First slide special case */}
-          <div 
-            className={`cursor-pointer transition-colors ${currentSlide === 1 ? 'text-[#00E5E5]' : 'text-white/70 hover:text-white'}`}
-            onClick={() => goToSlide(1)}
-          >
-            Cover
-          </div>
-
           {/* Topics and their slides */}
           {slideStructure.topics.map((topic, index) => (
             <div key={index} className="space-y-2">
@@ -968,7 +235,7 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col" onClick={(e) => e.stopPropagation()}>
+      <div className="flex-1 flex flex-col">
         <div className="flex justify-between items-center p-4 border-b border-[#00E5E5]/20">
           <div className="text-white/70">
             {allSlides[currentSlide - 1]?.parentTopic} / {allSlides[currentSlide - 1]?.title}
@@ -976,27 +243,21 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
           <Button
             variant="ghost"
             className="text-[#E5DEFF] hover:text-[#9b87f5]"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClose();
-            }}
+            onClick={onClose}
           >
             Close
           </Button>
         </div>
 
-        <div className="flex-1 relative overflow-y-auto" style={{ height: 'calc(100vh - 180px)' }} onClick={(e) => e.stopPropagation()}>
-          {renderSlide(currentSlide)}
+        <div className="flex-1 relative overflow-y-auto" style={{ height: 'calc(100vh - 180px)' }}>
+          <Slide imagePath={allSlides[currentSlide - 1]?.imagePath} />
         </div>
 
         <div className="flex flex-col items-center gap-4 p-4 border-t border-[#00E5E5]/20 sticky bottom-0 bg-black z-10">
           <div className="flex items-center justify-between w-full max-w-3xl mx-auto">
             <Button
               variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                prevSlide();
-              }}
+              onClick={prevSlide}
               className="text-[#E5DEFF] hover:text-[#9b87f5]"
             >
               <ArrowLeft className="h-6 w-6" />
@@ -1011,20 +272,14 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
                       ? 'bg-[#00E5E5] w-4' 
                       : 'bg-white/30 hover:bg-white/50'
                   }`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    goToSlide(i + 1);
-                  }}
+                  onClick={() => goToSlide(i + 1)}
                 />
               ))}
             </div>
             
             <Button
               variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                nextSlide();
-              }}
+              onClick={nextSlide}
               className="text-[#E5DEFF] hover:text-[#9b87f5]"
             >
               <ArrowRight className="h-6 w-6" />
@@ -1035,40 +290,28 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
           <div className="flex items-center gap-2 text-sm">
             <div 
               className="relative"
-              onMouseLeave={(e) => {
-                e.stopPropagation();
+              onMouseLeave={() => {
                 setIsSelectingSlide(false);
                 setIsEditing(false);
               }}
             >
               <div
                 className="flex items-center gap-1 px-3 py-1 rounded border border-[#00E5E5]/30 bg-black/50 hover:border-[#00E5E5] group"
-                onClick={(e) => e.stopPropagation()}
               >
                 {isEditing ? (
                   <input
                     type="text"
                     value={inputValue}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      handleInputChange(e);
-                    }}
-                    onKeyDown={(e) => {
-                      e.stopPropagation();
-                      handleSlideInput(e);
-                    }}
+                    onChange={handleInputChange}
+                    onKeyDown={handleSlideInput}
                     className="w-8 bg-transparent text-[#00E5E5] outline-none text-center"
                     autoFocus
-                    onFocus={(e) => {
-                      e.stopPropagation();
-                      e.target.select();
-                    }}
+                    onFocus={e => e.target.select()}
                   />
                 ) : (
                   <span 
                     className="text-[#00E5E5] cursor-text w-8 text-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={() => {
                       setIsEditing(true);
                       setInputValue(currentSlide.toString());
                     }}
@@ -1082,10 +325,7 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
 
               {/* Slide Selection Dropdown */}
               {isSelectingSlide && !isEditing && (
-                <div 
-                  className="absolute bottom-full mb-2 left-0 bg-black border border-[#00E5E5]/30 rounded shadow-lg py-1 min-w-[100px]"
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <div className="absolute bottom-full mb-2 left-0 bg-black border border-[#00E5E5]/30 rounded shadow-lg py-1 min-w-[100px]">
                   {Array.from({ length: totalSlides }, (_, i) => (
                     <div
                       key={i}
@@ -1094,8 +334,7 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
                           ? 'bg-[#00E5E5]/10 text-[#00E5E5]'
                           : 'text-white/70 hover:bg-white/5'
                       }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() => {
                         goToSlide(i + 1);
                         setIsSelectingSlide(false);
                       }}
