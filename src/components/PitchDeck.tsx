@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface PitchDeckProps {
   isVisible: boolean;
@@ -129,6 +130,22 @@ const getAllSlides = (): SlideInfo[] => {
 
 const Slide = ({ imagePath }: { imagePath: string }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = imagePath;
+    img.onload = () => setIsLoaded(true);
+    img.onerror = () => setError(true);
+  }, [imagePath]);
+
+  if (error) {
+    return (
+      <div className="w-full h-full bg-black flex items-center justify-center">
+        <div className="text-red-500">Failed to load slide</div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full bg-black relative overflow-hidden">
@@ -148,23 +165,47 @@ const Slide = ({ imagePath }: { imagePath: string }) => {
           maxWidth: '100%',
           maxHeight: '100vh'
         }}
-        onLoad={() => setIsLoaded(true)}
-        loading="lazy"
+        onError={() => setError(true)}
       />
     </div>
   );
 };
 
 const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(1);
   const [isSelectingSlide, setIsSelectingSlide] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
   
   const allSlides = getAllSlides();
   const totalSlides = allSlides.length;
 
-  const handleSlideInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  // Preload images
+  useEffect(() => {
+    const preloadImages = async () => {
+      const newLoadedImages = new Set<string>();
+      await Promise.all(
+        allSlides.map(slide => {
+          return new Promise((resolve) => {
+            const img = new Image();
+            img.src = slide.imagePath;
+            img.onload = () => {
+              newLoadedImages.add(slide.imagePath);
+              resolve(null);
+            };
+            img.onerror = resolve;
+          });
+        })
+      );
+      setLoadedImages(newLoadedImages);
+    };
+
+    preloadImages();
+  }, [allSlides]);
+
+  const handleSlideInput = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       const newSlide = parseInt(inputValue);
       if (!isNaN(newSlide) && newSlide >= 1 && newSlide <= totalSlides) {
@@ -174,25 +215,26 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
     } else if (e.key === 'Escape') {
       setIsEditing(false);
     }
-  };
+  }, [inputValue, totalSlides]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Only allow numbers
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
     setInputValue(value);
-  };
+  }, []);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setCurrentSlide(prev => prev === totalSlides ? 1 : prev + 1);
-  };
+  }, [totalSlides]);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     setCurrentSlide(prev => prev === 1 ? totalSlides : prev - 1);
-  };
+  }, [totalSlides]);
 
-  const goToSlide = (slideId: number) => {
-    setCurrentSlide(slideId);
-  };
+  const goToSlide = useCallback((slideId: number) => {
+    if (slideId >= 1 && slideId <= totalSlides) {
+      setCurrentSlide(slideId);
+    }
+  }, [totalSlides]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -214,7 +256,14 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isVisible]);
+  }, [isVisible, nextSlide, prevSlide, onClose]);
+
+  // Handle route changes
+  useEffect(() => {
+    if (!isVisible) {
+      navigate('/');
+    }
+  }, [isVisible, navigate]);
 
   if (!isVisible) return null;
 
@@ -263,7 +312,13 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
         </div>
 
         <div className="flex-1 relative overflow-y-auto" style={{ height: 'calc(100vh - 180px)' }}>
-          <Slide imagePath={allSlides[currentSlide - 1]?.imagePath} />
+          {loadedImages.has(allSlides[currentSlide - 1]?.imagePath) ? (
+            <Slide imagePath={allSlides[currentSlide - 1]?.imagePath} />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="text-[#00E5E5] text-xl">Loading slide...</div>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col items-center gap-4 p-4 border-t border-[#00E5E5]/20 sticky bottom-0 bg-black z-10">
@@ -300,7 +355,7 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
           </div>
 
           {/* Slide Counter */}
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2">
             <div 
               className="relative"
               onMouseLeave={() => {
@@ -335,28 +390,6 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
                 <span className="text-white/50">/</span>
                 <span className="text-white/70">{totalSlides}</span>
               </div>
-
-              {/* Slide Selection Dropdown */}
-              {isSelectingSlide && !isEditing && (
-                <div className="absolute bottom-full mb-2 left-0 bg-black border border-[#00E5E5]/30 rounded shadow-lg py-1 min-w-[100px]">
-                  {Array.from({ length: totalSlides }, (_, i) => (
-                    <div
-                      key={i}
-                      className={`px-3 py-1 cursor-pointer ${
-                        i + 1 === currentSlide
-                          ? 'bg-[#00E5E5]/10 text-[#00E5E5]'
-                          : 'text-white/70 hover:bg-white/5'
-                      }`}
-                      onClick={() => {
-                        goToSlide(i + 1);
-                        setIsSelectingSlide(false);
-                      }}
-                    >
-                      Slide {i + 1}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         </div>
