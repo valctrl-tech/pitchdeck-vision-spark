@@ -27,6 +27,48 @@
 
       gtag('config', 'G-QYLSFWWM9B');
     </script>
+    
+    <!-- Remove watermark -->
+    <script>
+      window.addEventListener('DOMContentLoaded', function() {
+        // Remove all lovable related elements
+        function removeWatermark() {
+          const removeSelectors = [
+            '[alt="Made with Lovable"]',
+            '[href*="lovable"]',
+            '[data-lovable]',
+            '[style*="lovable"]',
+            'div[class*="lovable"]',
+            'div[id*="lovable"]',
+            'a[href*="lovable"]',
+            'span[class*="lovable"]',
+            '#lovable-watermark',
+            '.lovable-watermark'
+          ];
+          
+          removeSelectors.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => el.remove());
+          });
+          
+          // Also try to find elements at bottom right
+          const allElements = document.querySelectorAll('*');
+          allElements.forEach(el => {
+            const style = window.getComputedStyle(el);
+            if (style.position === 'fixed' && 
+                (style.bottom === '0px' || parseInt(style.bottom) < 20) && 
+                (style.right === '0px' || parseInt(style.right) < 20)) {
+              el.remove();
+            }
+          });
+        }
+        
+        // Run immediately and after a short delay
+        removeWatermark();
+        setTimeout(removeWatermark, 1000);
+        setTimeout(removeWatermark, 3000);
+      });
+    </script>
   </head>
 
   <body>

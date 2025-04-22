@@ -71,17 +71,67 @@ const getAllSlides = (): SlideInfo[] => {
   return slides;
 };
 
+// Create a reusable image component that handles errors
+const SafeImage = ({ src, alt, className, style, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => {
+  const [hasError, setHasError] = useState(false);
+  
+  // Extract the image name from the src path to create unique gradients
+  const getGradient = () => {
+    if (!src) return 'from-[#001f3f] to-black';
+    
+    const fileName = src.split('/').pop()?.split('.')[0] || '';
+    
+    // Create different gradients based on the image name
+    const gradients: Record<string, string> = {
+      'solution': 'from-[#001a35] to-[#004080]',
+      'features': 'from-[#002a55] to-[#004080]',
+      'market': 'from-[#003366] to-[#001f3f]',
+      'size': 'from-[#002244] to-[#000033]',
+      'revenue': 'from-[#001a35] to-[#003366]',
+      'pricing': 'from-[#002244] to-[#001a35]',
+      'progress': 'from-[#003366] to-[#002244]',
+      'milestones': 'from-[#001f3f] to-[#000033]',
+      'roadmap': 'from-[#001a35] to-[#001f3f]',
+      'investment': 'from-[#003366] to-[#001a35]',
+      'default': 'from-[#001f3f] to-black'
+    };
+    
+    return gradients[fileName] || gradients.default;
+  };
+  
+  return hasError ? (
+    <div 
+      className={`bg-gradient-to-br ${getGradient()} flex justify-center items-center ${className}`}
+      style={{ ...style }}
+      {...props}
+    >
+      <div className="w-1/2 h-1/2 border border-[#00E5E5]/30 flex items-center justify-center rounded-md">
+        <div className="text-[#00E5E5] text-lg">Image not available</div>
+      </div>
+    </div>
+  ) : (
+    <img 
+      src={src}
+      alt={alt}
+      className={className}
+      style={style}
+      onError={() => setHasError(true)}
+      {...props}
+    />
+  );
+};
+
 // Slide Components
 const SlideIntro = () => (
   <div className="w-full h-full bg-black relative overflow-hidden">
-    <img 
+    <SafeImage 
       src="/images/slide1.png"
       alt="ValCtrl Cover Slide" 
       className="absolute inset-0 w-full h-full object-contain"
       style={{
         imageRendering: 'crisp-edges',
         maxWidth: '100%',
-        maxHeight: '100%'
+        maxHeight: '100vh'
       }}
     />
   </div>
@@ -91,7 +141,7 @@ const Slide1 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     {/* Background feather image */}
     <div className="absolute right-0 top-0 bottom-0 w-[45%] h-full">
-      <img 
+      <SafeImage 
         src="/images/feather1.png"
         alt=""
         aria-hidden="true"
@@ -159,7 +209,7 @@ const Slide1 = () => (
 const Slide2 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/solution.png"
         alt=""
         aria-hidden="true"
@@ -218,7 +268,7 @@ const Slide2 = () => (
 const Slide3 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/features.png"
         alt=""
         aria-hidden="true"
@@ -278,7 +328,7 @@ const Slide3 = () => (
 const Slide4 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/market.png"
         alt=""
         aria-hidden="true"
@@ -342,7 +392,7 @@ const Slide4 = () => (
 const Slide5 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/size.png"
         alt=""
         aria-hidden="true"
@@ -403,7 +453,7 @@ const Slide5 = () => (
 const Slide6 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/revenue.png"
         alt=""
         aria-hidden="true"
@@ -464,7 +514,7 @@ const Slide6 = () => (
 const Slide7 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/pricing.png"
         alt=""
         aria-hidden="true"
@@ -525,7 +575,7 @@ const Slide7 = () => (
 const Slide8 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/progress.png"
         alt=""
         aria-hidden="true"
@@ -586,7 +636,7 @@ const Slide8 = () => (
 const Slide9 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/milestones.png"
         alt=""
         aria-hidden="true"
@@ -648,7 +698,7 @@ const Slide9 = () => (
 const Slide10 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/roadmap.png"
         alt=""
         aria-hidden="true"
@@ -710,7 +760,7 @@ const Slide10 = () => (
 const Slide11 = () => (
   <div className="w-full h-full flex flex-col bg-black text-white relative overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-[45%]">
-      <img 
+      <SafeImage 
         src="/images/investment.png"
         alt=""
         aria-hidden="true"
@@ -773,9 +823,34 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
   const [isSelectingSlide, setIsSelectingSlide] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [mounted, setMounted] = useState(false);
   
   const allSlides = getAllSlides();
-  const totalSlides = allSlides.length; // This should now be 12 with the new cover slide
+  const totalSlides = allSlides.length;
+
+  // Ensure component is fully mounted before rendering
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  // Add debug logging
+  useEffect(() => {
+    console.log("PitchDeck visibility:", isVisible);
+  }, [isVisible]);
+
+  // Prevent body scrolling when pitch deck is visible
+  useEffect(() => {
+    if (isVisible) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isVisible]);
 
   const handleSlideInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -827,7 +902,7 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isVisible]);
+  }, [isVisible, onClose]);
 
   const renderSlide = (slideNumber: number) => {
     switch(slideNumber) {
@@ -846,11 +921,17 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
       default: return <div className="text-white">Slide {slideNumber} content coming soon</div>;
     }
   };
+  
+  // Prevent rendering if not visible or not mounted
+  if (!isVisible || !mounted) return null;
 
-  if (!isVisible) return null;
+  // Handle container click to prevent closing when clicking inside
+  const handleContainerClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-black/90 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex bg-black/90 backdrop-blur-sm" onClick={handleContainerClick}>
       {/* Navigation Sidebar */}
       <div className="w-64 h-full bg-black border-r border-[#00E5E5]/20 p-6 overflow-y-auto">
         <div className="space-y-6">
@@ -887,7 +968,7 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center p-4 border-b border-[#00E5E5]/20">
           <div className="text-white/70">
             {allSlides[currentSlide - 1]?.parentTopic} / {allSlides[currentSlide - 1]?.title}
@@ -895,13 +976,16 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
           <Button
             variant="ghost"
             className="text-[#E5DEFF] hover:text-[#9b87f5]"
-            onClick={onClose}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
           >
             Close
           </Button>
         </div>
 
-        <div className="flex-1 relative overflow-y-auto" style={{ height: 'calc(100vh - 180px)' }}>
+        <div className="flex-1 relative overflow-y-auto" style={{ height: 'calc(100vh - 180px)' }} onClick={(e) => e.stopPropagation()}>
           {renderSlide(currentSlide)}
         </div>
 
@@ -909,7 +993,10 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
           <div className="flex items-center justify-between w-full max-w-3xl mx-auto">
             <Button
               variant="ghost"
-              onClick={prevSlide}
+              onClick={(e) => {
+                e.stopPropagation();
+                prevSlide();
+              }}
               className="text-[#E5DEFF] hover:text-[#9b87f5]"
             >
               <ArrowLeft className="h-6 w-6" />
@@ -924,14 +1011,20 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
                       ? 'bg-[#00E5E5] w-4' 
                       : 'bg-white/30 hover:bg-white/50'
                   }`}
-                  onClick={() => goToSlide(i + 1)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToSlide(i + 1);
+                  }}
                 />
               ))}
             </div>
             
             <Button
               variant="ghost"
-              onClick={nextSlide}
+              onClick={(e) => {
+                e.stopPropagation();
+                nextSlide();
+              }}
               className="text-[#E5DEFF] hover:text-[#9b87f5]"
             >
               <ArrowRight className="h-6 w-6" />
@@ -942,28 +1035,40 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
           <div className="flex items-center gap-2 text-sm">
             <div 
               className="relative"
-              onMouseLeave={() => {
+              onMouseLeave={(e) => {
+                e.stopPropagation();
                 setIsSelectingSlide(false);
                 setIsEditing(false);
               }}
             >
               <div
                 className="flex items-center gap-1 px-3 py-1 rounded border border-[#00E5E5]/30 bg-black/50 hover:border-[#00E5E5] group"
+                onClick={(e) => e.stopPropagation()}
               >
                 {isEditing ? (
                   <input
                     type="text"
                     value={inputValue}
-                    onChange={handleInputChange}
-                    onKeyDown={handleSlideInput}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleInputChange(e);
+                    }}
+                    onKeyDown={(e) => {
+                      e.stopPropagation();
+                      handleSlideInput(e);
+                    }}
                     className="w-8 bg-transparent text-[#00E5E5] outline-none text-center"
                     autoFocus
-                    onFocus={e => e.target.select()}
+                    onFocus={(e) => {
+                      e.stopPropagation();
+                      e.target.select();
+                    }}
                   />
                 ) : (
                   <span 
                     className="text-[#00E5E5] cursor-text w-8 text-center"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setIsEditing(true);
                       setInputValue(currentSlide.toString());
                     }}
@@ -977,7 +1082,10 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
 
               {/* Slide Selection Dropdown */}
               {isSelectingSlide && !isEditing && (
-                <div className="absolute bottom-full mb-2 left-0 bg-black border border-[#00E5E5]/30 rounded shadow-lg py-1 min-w-[100px]">
+                <div 
+                  className="absolute bottom-full mb-2 left-0 bg-black border border-[#00E5E5]/30 rounded shadow-lg py-1 min-w-[100px]"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {Array.from({ length: totalSlides }, (_, i) => (
                     <div
                       key={i}
@@ -986,7 +1094,8 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
                           ? 'bg-[#00E5E5]/10 text-[#00E5E5]'
                           : 'text-white/70 hover:bg-white/5'
                       }`}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         goToSlide(i + 1);
                         setIsSelectingSlide(false);
                       }}

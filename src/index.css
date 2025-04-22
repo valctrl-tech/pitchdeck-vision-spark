@@ -200,3 +200,32 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #9b87f5;
 }
+
+/* Add a rule to hide the lovable watermark */
+[alt="Made with Lovable"], 
+[href*="lovable.ai"], 
+[href*="lovable.dev"], 
+[data-lovable], 
+[style*="lovable"],
+div[class*="lovable"],
+div[id*="lovable"],
+a[href*="lovable"],
+span[class*="lovable"],
+#lovable-watermark,
+.lovable-watermark,
+/* Generic styles to hide fixed bottom-right elements */
+.watermark-container,
+[style*="position: fixed; bottom: 0; right: 0"],
+[style*="position:fixed;bottom:0;right:0"],
+[style*="position: fixed; right: 0; bottom: 0"],
+[style*="position:fixed;right:0;bottom:0"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
