@@ -4,7 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({
-  base: '/',
+  base: mode === 'production' ? 'https://pitchdeck.valctrl.com/' : '/',
   server: {
     port: 5173,
     host: true, // Listen on all addresses
