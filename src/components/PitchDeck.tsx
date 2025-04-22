@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -131,12 +131,18 @@ const getAllSlides = (): SlideInfo[] => {
 const Slide = ({ imagePath }: { imagePath: string }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const img = new Image();
     img.src = imagePath;
     img.onload = () => setIsLoaded(true);
     img.onerror = () => setError(true);
+
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
   }, [imagePath]);
 
   if (error) {
@@ -155,6 +161,7 @@ const Slide = ({ imagePath }: { imagePath: string }) => {
         </div>
       )}
       <img 
+        ref={imgRef}
         src={imagePath}
         alt="Slide" 
         className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-300 ${
@@ -166,6 +173,7 @@ const Slide = ({ imagePath }: { imagePath: string }) => {
           maxHeight: '100vh'
         }}
         onError={() => setError(true)}
+        loading="eager"
       />
     </div>
   );
@@ -178,31 +186,51 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
+  const timeoutRef = useRef<NodeJS.Timeout>();
   
   const allSlides = getAllSlides();
   const totalSlides = allSlides.length;
 
-  // Preload images
+  // Preload images with timeout
   useEffect(() => {
+    setIsLoading(true);
     const preloadImages = async () => {
-      const newLoadedImages = new Set<string>();
-      await Promise.all(
-        allSlides.map(slide => {
-          return new Promise((resolve) => {
-            const img = new Image();
-            img.src = slide.imagePath;
-            img.onload = () => {
-              newLoadedImages.add(slide.imagePath);
-              resolve(null);
-            };
-            img.onerror = resolve;
-          });
-        })
-      );
-      setLoadedImages(newLoadedImages);
+      try {
+        const newLoadedImages = new Set<string>();
+        await Promise.all(
+          allSlides.map(slide => {
+            return new Promise((resolve) => {
+              const img = new Image();
+              img.src = slide.imagePath;
+              img.onload = () => {
+                newLoadedImages.add(slide.imagePath);
+                resolve(null);
+              };
+              img.onerror = resolve;
+            });
+          })
+        );
+        setLoadedImages(newLoadedImages);
+      } catch (error) {
+        console.error('Error preloading images:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
+    // Set a timeout to prevent infinite loading
+    timeoutRef.current = setTimeout(() => {
+      setIsLoading(false);
+    }, 10000);
+
     preloadImages();
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [allSlides]);
 
   const handleSlideInput = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -236,27 +264,34 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
     }
   }, [totalSlides]);
 
-  // Handle keyboard navigation
+  // Handle keyboard navigation with debounce
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isVisible) return;
       
-      switch (e.key) {
-        case 'ArrowLeft':
-          prevSlide();
-          break;
-        case 'ArrowRight':
-          nextSlide();
-          break;
-        case 'Escape':
-          onClose();
-          break;
-      }
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        switch (e.key) {
+          case 'ArrowLeft':
+            prevSlide();
+            break;
+          case 'ArrowRight':
+            nextSlide();
+            break;
+          case 'Escape':
+            onClose();
+            break;
+        }
+      }, 100);
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isVisible, nextSlide, prevSlide, onClose]);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timeoutId);
+    };
+  }, [isVisible, prevSlide, nextSlide, onClose]);
 
   // Handle route changes
   useEffect(() => {
@@ -268,132 +303,115 @@ const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-black/90 backdrop-blur-sm">
-      {/* Navigation Sidebar */}
-      <div className="w-64 h-full bg-black border-r border-[#00E5E5]/20 p-6 overflow-y-auto">
-        <div className="space-y-6">
-          {/* Topics and their slides */}
-          {slideStructure.topics.map((topic, index) => (
-            <div key={index} className="space-y-2">
-              <div className="text-white/90 font-medium">{topic.title}</div>
-              <div className="pl-4 space-y-2">
-                {topic.slides.map(slide => (
-                  <div
-                    key={slide.id}
-                    className={`cursor-pointer transition-colors ${
-                      currentSlide === slide.id 
-                        ? 'text-[#00E5E5]' 
-                        : 'text-white/50 hover:text-white/70'
-                    }`}
-                    onClick={() => goToSlide(slide.id)}
-                  >
-                    {slide.title}
-                  </div>
-                ))}
+    <div className="fixed inset-0 bg-black z-50 flex flex-col">
+      {isLoading ? (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-[#00E5E5] text-xl">Loading pitch deck...</div>
+        </div>
+      ) : (
+        <>
+          <div className="flex-1 relative">
+            <Slide imagePath={allSlides[currentSlide - 1].imagePath} />
+          </div>
+          <div className="flex-1 flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b border-[#00E5E5]/20">
+              <div className="text-white/70">
+                {allSlides[currentSlide - 1]?.parentTopic} / {allSlides[currentSlide - 1]?.title}
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col">
-        <div className="flex justify-between items-center p-4 border-b border-[#00E5E5]/20">
-          <div className="text-white/70">
-            {allSlides[currentSlide - 1]?.parentTopic} / {allSlides[currentSlide - 1]?.title}
-          </div>
-          <Button
-            variant="ghost"
-            className="text-[#E5DEFF] hover:text-[#9b87f5]"
-            onClick={onClose}
-          >
-            Close
-          </Button>
-        </div>
-
-        <div className="flex-1 relative overflow-y-auto" style={{ height: 'calc(100vh - 180px)' }}>
-          {loadedImages.has(allSlides[currentSlide - 1]?.imagePath) ? (
-            <Slide imagePath={allSlides[currentSlide - 1]?.imagePath} />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="text-[#00E5E5] text-xl">Loading slide...</div>
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col items-center gap-4 p-4 border-t border-[#00E5E5]/20 sticky bottom-0 bg-black z-10">
-          <div className="flex items-center justify-between w-full max-w-3xl mx-auto">
-            <Button
-              variant="ghost"
-              onClick={prevSlide}
-              className="text-[#E5DEFF] hover:text-[#9b87f5]"
-            >
-              <ArrowLeft className="h-6 w-6" />
-            </Button>
-            
-            <div className="flex items-center gap-2">
-              {Array.from({ length: totalSlides }, (_, i) => (
-                <div
-                  key={i}
-                  className={`w-2 h-2 rounded-full transition-all cursor-pointer ${
-                    i + 1 === currentSlide 
-                      ? 'bg-[#00E5E5] w-4' 
-                      : 'bg-white/30 hover:bg-white/50'
-                  }`}
-                  onClick={() => goToSlide(i + 1)}
-                />
-              ))}
-            </div>
-            
-            <Button
-              variant="ghost"
-              onClick={nextSlide}
-              className="text-[#E5DEFF] hover:text-[#9b87f5]"
-            >
-              <ArrowRight className="h-6 w-6" />
-            </Button>
-          </div>
-
-          {/* Slide Counter */}
-          <div className="flex items-center gap-2">
-            <div 
-              className="relative"
-              onMouseLeave={() => {
-                setIsSelectingSlide(false);
-                setIsEditing(false);
-              }}
-            >
-              <div
-                className="flex items-center gap-1 px-3 py-1 rounded border border-[#00E5E5]/30 bg-black/50 hover:border-[#00E5E5] group"
+              <Button
+                variant="ghost"
+                className="text-[#E5DEFF] hover:text-[#9b87f5]"
+                onClick={onClose}
               >
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onKeyDown={handleSlideInput}
-                    className="w-8 bg-transparent text-[#00E5E5] outline-none text-center"
-                    autoFocus
-                    onFocus={e => e.target.select()}
-                  />
-                ) : (
-                  <span 
-                    className="text-[#00E5E5] cursor-text w-8 text-center"
-                    onClick={() => {
-                      setIsEditing(true);
-                      setInputValue(currentSlide.toString());
-                    }}
+                Close
+              </Button>
+            </div>
+
+            <div className="flex-1 relative overflow-y-auto" style={{ height: 'calc(100vh - 180px)' }}>
+              {loadedImages.has(allSlides[currentSlide - 1]?.imagePath) ? (
+                <Slide imagePath={allSlides[currentSlide - 1]?.imagePath} />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-[#00E5E5] text-xl">Loading slide...</div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col items-center gap-4 p-4 border-t border-[#00E5E5]/20 sticky bottom-0 bg-black z-10">
+              <div className="flex items-center justify-between w-full max-w-3xl mx-auto">
+                <Button
+                  variant="ghost"
+                  onClick={prevSlide}
+                  className="text-[#E5DEFF] hover:text-[#9b87f5]"
+                >
+                  <ArrowLeft className="h-6 w-6" />
+                </Button>
+                
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: totalSlides }, (_, i) => (
+                    <div
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-all cursor-pointer ${
+                        i + 1 === currentSlide 
+                          ? 'bg-[#00E5E5] w-4' 
+                          : 'bg-white/30 hover:bg-white/50'
+                      }`}
+                      onClick={() => goToSlide(i + 1)}
+                    />
+                  ))}
+                </div>
+                
+                <Button
+                  variant="ghost"
+                  onClick={nextSlide}
+                  className="text-[#E5DEFF] hover:text-[#9b87f5]"
+                >
+                  <ArrowRight className="h-6 w-6" />
+                </Button>
+              </div>
+
+              {/* Slide Counter */}
+              <div className="flex items-center gap-2">
+                <div 
+                  className="relative"
+                  onMouseLeave={() => {
+                    setIsSelectingSlide(false);
+                    setIsEditing(false);
+                  }}
+                >
+                  <div
+                    className="flex items-center gap-1 px-3 py-1 rounded border border-[#00E5E5]/30 bg-black/50 hover:border-[#00E5E5] group"
                   >
-                    {currentSlide}
-                  </span>
-                )}
-                <span className="text-white/50">/</span>
-                <span className="text-white/70">{totalSlides}</span>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        onKeyDown={handleSlideInput}
+                        className="w-8 bg-transparent text-[#00E5E5] outline-none text-center"
+                        autoFocus
+                        onFocus={e => e.target.select()}
+                      />
+                    ) : (
+                      <span 
+                        className="text-[#00E5E5] cursor-text w-8 text-center"
+                        onClick={() => {
+                          setIsEditing(true);
+                          setInputValue(currentSlide.toString());
+                        }}
+                      >
+                        {currentSlide}
+                      </span>
+                    )}
+                    <span className="text-white/50">/</span>
+                    <span className="text-white/70">{totalSlides}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
