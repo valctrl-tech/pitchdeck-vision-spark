@@ -3,25 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>valctrl-page-spark</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <title>PitchDeck-Valctrl</title>
+    <meta name="description" content="Create beautiful pitch decks with AI" />
+    <meta name="author" content="PitchDeck Vision" />
 
-    <meta property="og:title" content="valctrl-page-spark" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="PitchDeck-Valctrl" />
+    <meta property="og:description" content="Create beautiful pitch decks with AI" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:image" content="/favicon.svg" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-    <script type="module" crossorigin src="/pitchdeck-vision-spark/assets/index-Czcu2ykP.js"></script>
-    <link rel="stylesheet" crossorigin href="/pitchdeck-vision-spark/assets/index-CXz40pfx.css">
+    <meta name="twitter:site" content="@valctrl" />
+    <meta name="twitter:image" content="/favicon.svg" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" type="image/x-icon" />
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QYLSFWWM9B"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-QYLSFWWM9B');
+    </script>
+    
+    <!-- Remove watermark -->
+    <script>
+      window.addEventListener('DOMContentLoaded', function() {
+        // Remove all lovable related elements
+        function removeWatermark() {
+          const removeSelectors = [
+            '[alt="Made with Lovable"]',
+            '[href*="lovable"]',
+            '[data-lovable]',
+            '[style*="lovable"]',
+            'div[class*="lovable"]',
+            'div[id*="lovable"]',
+            'a[href*="lovable"]',
+            'span[class*="lovable"]',
+            '#lovable-watermark',
+            '.lovable-watermark'
+          ];
+          
+          removeSelectors.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => el.remove());
+          });
+          
+          // Also try to find elements at bottom right
+          const allElements = document.querySelectorAll('*');
+          allElements.forEach(el => {
+            const style = window.getComputedStyle(el);
+            if (style.position === 'fixed' && 
+                (style.bottom === '0px' || parseInt(style.bottom) < 20) && 
+                (style.right === '0px' || parseInt(style.right) < 20)) {
+              el.remove();
+            }
+          });
+        }
+        
+        // Run immediately and after a short delay
+        removeWatermark();
+        setTimeout(removeWatermark, 1000);
+        setTimeout(removeWatermark, 3000);
+      });
+    </script>
+    <script type="module" crossorigin src="/assets/index-ydAIZjGl.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BZ_5Gt0V.css">
   </head>
 
   <body>
     <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
   </body>
 </html>
