@@ -15,7 +15,21 @@ export default defineConfig(({ command, mode }) => ({
     assetsDir: 'assets',
     sourcemap: mode !== 'production',
     minify: 'terser',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['@radix-ui/react-toast', '@radix-ui/react-tooltip'],
+        }
+      }
+    },
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
   },
   plugins: [
     react(),

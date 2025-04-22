@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface PitchDeckProps {
@@ -127,20 +127,33 @@ const getAllSlides = (): SlideInfo[] => {
   return slides;
 };
 
-const Slide = ({ imagePath }: { imagePath: string }) => (
-  <div className="w-full h-full bg-black relative overflow-hidden">
-    <img 
-      src={imagePath}
-      alt="Slide" 
-      className="absolute inset-0 w-full h-full object-contain"
-      style={{
-        imageRendering: 'crisp-edges',
-        maxWidth: '100%',
-        maxHeight: '100vh'
-      }}
-    />
-  </div>
-);
+const Slide = ({ imagePath }: { imagePath: string }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="w-full h-full bg-black relative overflow-hidden">
+      {!isLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-[#00E5E5] text-xl">Loading slide...</div>
+        </div>
+      )}
+      <img 
+        src={imagePath}
+        alt="Slide" 
+        className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-300 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{
+          imageRendering: 'crisp-edges',
+          maxWidth: '100%',
+          maxHeight: '100vh'
+        }}
+        onLoad={() => setIsLoaded(true)}
+        loading="lazy"
+      />
+    </div>
+  );
+};
 
 const PitchDeck = ({ isVisible, onClose }: PitchDeckProps) => {
   const [currentSlide, setCurrentSlide] = useState(1);

@@ -1,6 +1,6 @@
 import { ArrowRight, User, Mail, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import PitchDeck from "./PitchDeck";
 import { Input } from "@/components/ui/input";
 
@@ -14,33 +14,9 @@ const Hero = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (isPitchDeckVisible) {
-      console.log("Pitch deck opened");
-      document.body.style.overflow = 'hidden';
-    } else {
-      console.log("Pitch deck closed");
-      document.body.style.overflow = 'auto';
-    }
-    
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isPitchDeckVisible]);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleOpenPitchDeck = () => {
-    console.log("Opening pitch deck");
-    setIsPitchDeckVisible(true);
-  };
-
-  const handleClosePitchDeck = () => {
-    console.log("Closing pitch deck");
-    setIsPitchDeckVisible(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,7 +81,7 @@ const Hero = () => {
                 <div className="flex justify-center lg:justify-start mt-4">
                   <Button 
                     className="bg-gradient-to-r from-[#001a35] to-[#004080] hover:from-[#002a55] hover:to-[#0055aa] text-lg px-8 py-6 h-auto border border-blue-700 text-white"
-                    onClick={handleOpenPitchDeck}
+                    onClick={() => setIsPitchDeckVisible(true)}
                   >
                     View Pitchdeck
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -190,7 +166,7 @@ const Hero = () => {
 
       <PitchDeck 
         isVisible={isPitchDeckVisible} 
-        onClose={handleClosePitchDeck} 
+        onClose={() => setIsPitchDeckVisible(false)} 
       />
     </>
   );
