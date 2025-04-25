@@ -1,14 +1,14 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({
   base: '/',
   server: {
-    port: 5173,
-    host: true, // Listen on all addresses
-    open: true // This will automatically open the browser
+    port: 8080,
+    host: true,
+    open: true
   },
   build: {
     outDir: 'dist',
