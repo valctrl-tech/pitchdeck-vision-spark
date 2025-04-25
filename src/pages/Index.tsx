@@ -1,9 +1,33 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import PitchDeck from "@/components/PitchDeck";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    company: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // Add your form submission logic here
+    setIsSubmitting(false);
+    setIsSubmitted(true);
+  };
+
   const [isPitchDeckVisible, setIsPitchDeckVisible] = useState(false);
 
   return (
@@ -60,11 +84,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Pitch Deck Component */}
-      <PitchDeck 
-        isVisible={isPitchDeckVisible} 
-        onClose={() => setIsPitchDeckVisible(false)} 
-      />
+      {/* Replace PitchDeck component usage with navigation */}
+      {isPitchDeckVisible && navigate('/pitch-deck')}
     </div>
   );
 };
