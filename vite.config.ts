@@ -10,7 +10,9 @@ export default defineConfig(({ command, mode }) => ({
     open: true,
     allowedHosts: [
       'b034a90b-87ad-4dd7-80bb-059c86d770b3.lovableproject.com',
-      '*.lovableproject.com'
+      '*.lovableproject.com',
+      'pitchdeck.valctrl.com',
+      '*.valctrl.com'
     ]
   },
   build: {

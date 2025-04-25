@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy } from 'react';
 import Navbar from "@/components/Navbar";
 import PitchDeck from "@/components/PitchDeck";
@@ -18,6 +18,9 @@ const Loading = () => (
 );
 
 const App = () => {
+  // Check if we're on the pitch-deck subdomain
+  const isPitchDeckDomain = window.location.hostname.startsWith('pitchdeck.');
+
   return (
     <TooltipProvider>
       <Toaster />
@@ -27,9 +30,19 @@ const App = () => {
           <Navbar />
           <Suspense fallback={<Loading />}>
             <Routes>
-              <Route path="/" element={<Hero />} />
-              <Route path="/pitch-deck" element={<PitchDeck />} />
-              <Route path="*" element={<NotFound />} />
+              {isPitchDeckDomain ? (
+                <>
+                  <Route path="/" element={<Navigate to="/pitch-deck" replace />} />
+                  <Route path="/pitch-deck" element={<PitchDeck />} />
+                  <Route path="*" element={<Navigate to="/pitch-deck" replace />} />
+                </>
+              ) : (
+                <>
+                  <Route path="/" element={<Hero />} />
+                  <Route path="/pitch-deck" element={<PitchDeck />} />
+                  <Route path="*" element={<NotFound />} />
+                </>
+              )}
             </Routes>
           </Suspense>
         </div>
