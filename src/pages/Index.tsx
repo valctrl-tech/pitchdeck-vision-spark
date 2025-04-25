@@ -28,7 +28,6 @@ const Index = () => {
     setIsSubmitted(true);
   };
 
-  // Use useEffect to handle navigation to avoid React node type error
   const handlePitchDeckView = () => {
     navigate('/pitch-deck');
   };
