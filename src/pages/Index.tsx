@@ -28,6 +28,11 @@ const Index = () => {
     setIsSubmitted(true);
   };
 
+  // Use useEffect to handle navigation to avoid React node type error
+  const handlePitchDeckView = () => {
+    navigate('/pitch-deck');
+  };
+
   const [isPitchDeckVisible, setIsPitchDeckVisible] = useState(false);
 
   return (
@@ -77,15 +82,12 @@ const Index = () => {
           </p>
           <Button 
             className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 px-8 py-4 text-white"
-            onClick={() => setIsPitchDeckVisible(true)}
+            onClick={handlePitchDeckView}
           >
             View Pitch Deck
           </Button>
         </div>
       </section>
-
-      {/* Replace PitchDeck component usage with navigation */}
-      {isPitchDeckVisible && navigate('/pitch-deck')}
     </div>
   );
 };
