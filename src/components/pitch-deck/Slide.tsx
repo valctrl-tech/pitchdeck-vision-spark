@@ -8,38 +8,59 @@ interface SlideProps {
 export const Slide = ({ imagePath, onError }: SlideProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [errorDetails, setErrorDetails] = useState<string>("");
 
   const handleImageLoad = useCallback(() => {
+    console.log(`Successfully loaded image: ${imagePath}`);
     setIsLoaded(true);
     setLoadError(false);
-  }, []);
+    setErrorDetails("");
+  }, [imagePath]);
 
   const handleImageError = useCallback(() => {
+    const errorMsg = `Failed to load image: ${imagePath}`;
+    console.error(errorMsg);
+    console.error('Current base URL:', window.location.origin);
+    console.error('Full image URL:', new URL(imagePath, window.location.origin).href);
+    
     setLoadError(true);
     setIsLoaded(false);
-    const error = new Error(`Failed to load image: ${imagePath}`);
-    console.error(error);
+    setErrorDetails(errorMsg);
+    
+    const error = new Error(errorMsg);
     onError?.(error);
   }, [imagePath, onError]);
 
   useEffect(() => {
     setIsLoaded(false);
     setLoadError(false);
+    setErrorDetails("");
 
     if (!imagePath) {
+      const error = "No image path provided";
+      console.error(error);
+      setErrorDetails(error);
       handleImageError();
       return;
     }
     
+    console.log(`Attempting to load image: ${imagePath}`);
     const img = new Image();
     img.src = imagePath;
     
     img.onload = handleImageLoad;
-    img.onerror = handleImageError;
+    img.onerror = (event) => {
+      console.error('Image load error event:', event);
+      handleImageError();
+    };
 
     // If the image is already cached, trigger load immediately
     if (img.complete) {
-      handleImageLoad();
+      if (img.naturalWidth === 0) {
+        handleImageError();
+      } else {
+        handleImageLoad();
+      }
     }
 
     return () => {
@@ -50,8 +71,10 @@ export const Slide = ({ imagePath, onError }: SlideProps) => {
 
   if (loadError) {
     return (
-      <div className="w-full h-full bg-black flex items-center justify-center">
-        <div className="text-red-500 text-xl">Failed to load slide</div>
+      <div className="w-full h-full bg-black flex flex-col items-center justify-center">
+        <div className="text-red-500 text-xl mb-2">Failed to load slide</div>
+        <div className="text-red-400 text-sm">{errorDetails}</div>
+        <div className="text-gray-400 text-xs mt-2">Path: {imagePath}</div>
       </div>
     );
   }

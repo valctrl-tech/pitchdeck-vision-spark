@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://pitchdeck.valctrl.com",
+  "homepage": "https://pitchdeck.valctrl.com/pitch-deck",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

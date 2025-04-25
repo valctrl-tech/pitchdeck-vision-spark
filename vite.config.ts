@@ -4,7 +4,6 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ command, mode }) => ({
-  base: '/',
   server: {
     port: 8080,
     host: "::",
@@ -26,8 +25,8 @@ export default defineConfig(({ command, mode }) => ({
     },
     terserOptions: {
       compress: {
-        drop_console: true,
-        drop_debugger: true
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production'
       }
     }
   },
