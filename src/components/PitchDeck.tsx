@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SlideNavigation } from "./pitch-deck/SlideNavigation";
 import { Slide } from "./pitch-deck/Slide";
@@ -12,6 +12,8 @@ const PitchDeck = () => {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const unmountingRef = useRef(false);
   const allSlides = getAllSlides();
   const totalSlides = allSlides.length;
 
@@ -19,6 +21,7 @@ const PitchDeck = () => {
   const currentSlideData = allSlides[currentSlide - 1];
 
   const handleError = useCallback((error: Error) => {
+    if (unmountingRef.current) return;
     console.error('Pitch deck error:', error);
     setError('An error occurred while displaying the slide. Please try refreshing the page.');
   }, []);
@@ -26,14 +29,18 @@ const PitchDeck = () => {
   const handleClose = useCallback(() => {
     setIsClosing(true);
     // Add a small delay to prevent accidental closing
-    setTimeout(() => {
-      navigate('/');
+    const timeout = setTimeout(() => {
+      if (!unmountingRef.current) {
+        navigate('/');
+      }
     }, 100);
+    return () => clearTimeout(timeout);
   }, [navigate]);
 
   const nextSlide = useCallback(() => {
     try {
-      if (isClosing) return;
+      if (isClosing || isTransitioning) return;
+      setIsTransitioning(true);
       setCurrentSlide(prev => {
         const next = prev === totalSlides ? 1 : prev + 1;
         if (!allSlides[next - 1]) {
@@ -42,14 +49,17 @@ const PitchDeck = () => {
         return next;
       });
       setError(null);
+      setTimeout(() => setIsTransitioning(false), 300);
     } catch (err) {
       handleError(err as Error);
+      setIsTransitioning(false);
     }
-  }, [totalSlides, allSlides, handleError, isClosing]);
+  }, [totalSlides, allSlides, handleError, isClosing, isTransitioning]);
 
   const prevSlide = useCallback(() => {
     try {
-      if (isClosing) return;
+      if (isClosing || isTransitioning) return;
+      setIsTransitioning(true);
       setCurrentSlide(prev => {
         const next = prev === 1 ? totalSlides : prev - 1;
         if (!allSlides[next - 1]) {
@@ -58,24 +68,29 @@ const PitchDeck = () => {
         return next;
       });
       setError(null);
+      setTimeout(() => setIsTransitioning(false), 300);
     } catch (err) {
       handleError(err as Error);
+      setIsTransitioning(false);
     }
-  }, [totalSlides, allSlides, handleError, isClosing]);
+  }, [totalSlides, allSlides, handleError, isClosing, isTransitioning]);
 
   const goToSlide = useCallback((slideId: number) => {
     try {
-      if (isClosing) return;
+      if (isClosing || isTransitioning) return;
+      setIsTransitioning(true);
       if (slideId >= 1 && slideId <= totalSlides && allSlides[slideId - 1]) {
         setCurrentSlide(slideId);
         setError(null);
       } else {
         throw new Error(`Invalid slide ID: ${slideId}`);
       }
+      setTimeout(() => setIsTransitioning(false), 300);
     } catch (err) {
       handleError(err as Error);
+      setIsTransitioning(false);
     }
-  }, [totalSlides, allSlides, handleError, isClosing]);
+  }, [totalSlides, allSlides, handleError, isClosing, isTransitioning]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -86,7 +101,7 @@ const PitchDeck = () => {
         }
 
         // Only handle events if we're on the pitch-deck route
-        if (location.pathname !== '/pitch-deck' || isClosing) return;
+        if (location.pathname !== '/pitch-deck' || isClosing || isTransitioning) return;
 
         switch (e.key) {
           case 'ArrowLeft':
@@ -108,16 +123,23 @@ const PitchDeck = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [location.pathname, navigate, nextSlide, prevSlide, handleClose, handleError, isClosing]);
+  }, [location.pathname, navigate, nextSlide, prevSlide, handleClose, handleError, isClosing, isTransitioning]);
+
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      unmountingRef.current = true;
+    };
+  }, []);
 
   // Group slides by parent topic with error handling
-  const slidesByTopic = allSlides.reduce((acc, slide) => {
+  const slidesByTopic: Record<string, SlideInfo[]> = allSlides.reduce((acc, slide) => {
     if (!acc[slide.parentTopic]) {
       acc[slide.parentTopic] = [];
     }
     acc[slide.parentTopic].push(slide);
     return acc;
-  }, {} as Record<string, typeof allSlides>);
+  }, {} as Record<string, SlideInfo[]>);
 
   if (!currentSlideData) {
     return (
@@ -166,6 +188,7 @@ const PitchDeck = () => {
             variant="ghost"
             className="text-[#E5DEFF] hover:text-[#9b87f5]"
             onClick={handleClose}
+            disabled={isClosing || isTransitioning}
           >
             Close
           </Button>
@@ -191,6 +214,7 @@ const PitchDeck = () => {
           onPrevSlide={prevSlide}
           onNextSlide={nextSlide}
           onGoToSlide={goToSlide}
+          disabled={isClosing || isTransitioning}
         />
       </div>
     </div>
