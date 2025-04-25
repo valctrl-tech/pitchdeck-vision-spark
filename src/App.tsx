@@ -1,8 +1,9 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy } from 'react';
 import Navbar from "@/components/Navbar";
 import PitchDeck from "@/components/PitchDeck";
 
@@ -18,8 +19,6 @@ const Loading = () => (
 );
 
 const App = () => {
-  const [isPitchDeckVisible, setIsPitchDeckVisible] = useState(false);
-
   return (
     <TooltipProvider>
       <Toaster />
@@ -30,14 +29,7 @@ const App = () => {
           <Suspense fallback={<Loading />}>
             <Routes>
               <Route path="/" element={<Hero />} />
-              <Route path="/pitch-deck" element={
-                <div className="min-h-screen">
-                  <PitchDeck 
-                    isVisible={true} 
-                    onClose={() => setIsPitchDeckVisible(false)} 
-                  />
-                </div>
-              } />
+              <Route path="/pitch-deck" element={<PitchDeck />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

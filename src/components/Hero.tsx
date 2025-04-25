@@ -1,11 +1,11 @@
 import { ArrowRight, User, Mail, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import PitchDeck from "./PitchDeck";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 
 const Hero = () => {
-  const [isPitchDeckVisible, setIsPitchDeckVisible] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -24,7 +24,6 @@ const Hero = () => {
     setIsSubmitting(true);
     
     try {
-      // Replace "YOUR_FORM_ID" with your actual Formspree form ID
       const response = await fetch("https://formspree.io/f/xvgapvrr", {
         method: "POST",
         headers: {
@@ -40,7 +39,6 @@ const Hero = () => {
       
       if (response.ok) {
         setIsSubmitted(true);
-        // Reset form after successful submission
         setTimeout(() => {
           setIsSubmitted(false);
           setFormData({ name: "", email: "", company: "" });
@@ -60,13 +58,10 @@ const Hero = () => {
   return (
     <>
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Dark blue to black gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#000000] to-[#001f3f] animate-gradient-xy"></div>
         
-        {/* Content */}
         <div className="relative z-10 container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-            {/* Left Side - Main Content */}
             <div className="w-full lg:w-1/2 text-center lg:text-left">
               <div className="space-y-6 max-w-2xl mx-auto lg:mx-0">
                 <h1 className="text-5xl md:text-6xl font-bold">
@@ -81,7 +76,7 @@ const Hero = () => {
                 <div className="flex justify-center lg:justify-start mt-4">
                   <Button 
                     className="bg-gradient-to-r from-[#001a35] to-[#004080] hover:from-[#002a55] hover:to-[#0055aa] text-lg px-8 py-6 h-auto border border-blue-700 text-white"
-                    onClick={() => setIsPitchDeckVisible(true)}
+                    onClick={() => navigate('/pitch-deck')}
                   >
                     View Pitchdeck
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -90,7 +85,6 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Right Side - Investment Inquiry Form */}
             <div className="w-full lg:w-5/12">
               <div className="bg-black/80 backdrop-blur-sm border border-blue-900/30 rounded-lg p-8 shadow-2xl">
                 {!isSubmitted ? (
@@ -160,16 +154,10 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Enhanced decorative elements */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-20 [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
       </div>
-
-      <PitchDeck 
-        isVisible={isPitchDeckVisible} 
-        onClose={() => setIsPitchDeckVisible(false)} 
-      />
     </>
   );
 };
 
-export default Hero; 
+export default Hero;
