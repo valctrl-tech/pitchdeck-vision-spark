@@ -1,12 +1,13 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { X } from "lucide-react";
 
 const Navbar = () => {
+  const location = useLocation();
   const [showContactModal, setShowContactModal] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -16,6 +17,11 @@ const Navbar = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  // Don't show navbar on pitch deck page
+  if (location.pathname === '/pitch-deck') {
+    return null;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -63,7 +69,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed w-full bg-gradient-to-r from-[#000000] to-[#001f3f] backdrop-blur-lg z-50 border-b border-blue-900/30">
+      <nav className="fixed w-full bg-gradient-to-r from-[#000000] to-[#001f3f] backdrop-blur-lg z-40 border-b border-blue-900/30">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             <Link to="/" className="text-2xl font-bold text-white">
@@ -88,7 +94,7 @@ const Navbar = () => {
 
       {/* Contact Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[90] p-4">
           <div className="bg-gradient-to-b from-[#001f3f] to-black border border-blue-900/30 rounded-lg max-w-md w-full p-6 relative animate-fade-in">
             <Button 
               variant="ghost" 
