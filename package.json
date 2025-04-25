@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://pitchdeck.valctrl.com/pitch-deck",
+  "homepage": "https://YOUR_GITHUB_USERNAME.github.io/pitchdeck-vision-spark",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -80,7 +80,7 @@
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "gh-pages": "^6.1.1",
+    "gh-pages": "^6.3.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "terser": "^5.39.0",

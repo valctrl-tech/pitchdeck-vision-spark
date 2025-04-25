@@ -4,6 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ command, mode }) => ({
+  base: command === 'serve' ? '/' : '/pitchdeck-vision-spark/',
   server: {
     port: 8080,
     host: "::",

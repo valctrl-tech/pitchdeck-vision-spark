@@ -21,7 +21,21 @@ const Privacy = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-[#00E5E5] mb-4">Your Cookie Choices</h2>
               <p className="text-gray-300 mb-4">
-                You can control and/or delete cookies as you wish. You can delete all cookies that are already on your computer and you can set most browsers to prevent them from being placed. If you do this, however, you may have to manually adjust some preferences every time you visit a site and some services and functionalities may not work.
+                You have multiple layers of control over cookies and tracking on our website:
+              </p>
+              <ul className="list-disc pl-6 text-gray-300 space-y-2">
+                <li>
+                  <strong>Browser Controls:</strong> Modern browsers like Chrome provide built-in privacy controls that let you manage third-party cookies and tracking across all websites you visit.
+                </li>
+                <li>
+                  <strong>Site-Specific Settings:</strong> Through our cookie consent banner, you can choose which types of cookies you accept on our website specifically.
+                </li>
+                <li>
+                  <strong>Manual Management:</strong> You can always view and delete cookies through your browser settings at any time.
+                </li>
+              </ul>
+              <p className="text-gray-300 mt-4">
+                If you choose to decline non-essential cookies or use browser privacy controls, core website functionality will still work, but some enhanced features may be limited.
               </p>
             </section>
 

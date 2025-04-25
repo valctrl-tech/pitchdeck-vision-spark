@@ -1,68 +1,68 @@
-import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { Button } from './ui/button';
 
-const CookieConsent = () => {
-  const [showBanner, setShowBanner] = useState(false);
+const COOKIE_CONSENT_KEY = 'cookie-consent-status';
+
+export default function CookieConsent() {
+  const [showBanner, setShowBanner] = useState(true);
 
   useEffect(() => {
-    // Check if user has already consented
-    const hasConsented = localStorage.getItem('cookieConsent');
-    if (!hasConsented) {
-      setShowBanner(true);
+    const consentStatus = localStorage.getItem(COOKIE_CONSENT_KEY);
+    if (consentStatus) {
+      setShowBanner(false);
     }
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem('cookieConsent', 'true');
+    localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted');
     setShowBanner(false);
   };
 
   const handleDecline = () => {
-    localStorage.setItem('cookieConsent', 'false');
+    localStorage.setItem(COOKIE_CONSENT_KEY, 'declined');
     setShowBanner(false);
-    
-    // Disable Google Analytics and other tracking
-    window['ga-disable-G-QYLSFWWM9B'] = true;
   };
 
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-black/90 border-t border-blue-900/30 p-4 z-50">
-      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-white text-sm flex-1">
-          <p>
-            We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.{' '}
-            <a href="/privacy" className="text-[#00E5E5] hover:underline">
-              Learn more
-            </a>
-          </p>
+    <div className="fixed inset-x-0 bottom-0 z-50 p-4 md:p-6">
+      <div className="mx-auto max-w-4xl rounded-lg bg-[#000510]/95 backdrop-blur-sm shadow-lg border border-[#00E5E5]/20 p-4 md:p-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div className="flex-1">
+            <p className="leading-relaxed text-gray-200">
+              We respect your privacy choices. This site uses cookies to enhance your experience. You can manage cookie preferences through your browser settings and our site controls.{' '}
+              <a 
+                href="/pitch-deck/privacy" 
+                className="text-[#00E5E5] hover:text-[#00E5E5]/80 hover:underline font-medium"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open('/pitch-deck/privacy', '_blank');
+                }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Learn more
+              </a>
+            </p>
+          </div>
+          <div className="flex gap-3 w-full md:w-auto">
+            <Button
+              variant="outline"
+              className="flex-1 md:flex-none border-[#00E5E5]/20 text-gray-200 hover:bg-[#00E5E5]/10 hover:text-white"
+              onClick={handleDecline}
+            >
+              Decline
+            </Button>
+            <Button
+              className="flex-1 md:flex-none bg-[#00E5E5] hover:bg-[#00E5E5]/80 text-black"
+              onClick={handleAccept}
+            >
+              Accept
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-4">
-          <Button
-            variant="outline"
-            onClick={handleDecline}
-            className="text-white border-blue-900/50 hover:bg-blue-900/20"
-          >
-            Decline
-          </Button>
-          <Button
-            onClick={handleAccept}
-            className="bg-[#00E5E5] hover:bg-[#00E5E5]/80 text-black"
-          >
-            Accept
-          </Button>
-        </div>
-        <button
-          onClick={() => setShowBanner(false)}
-          className="absolute top-2 right-2 text-gray-400 hover:text-white md:hidden"
-        >
-          <X className="h-5 w-5" />
-        </button>
       </div>
     </div>
   );
-};
-
-export default CookieConsent; 
+} 
