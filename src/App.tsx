@@ -21,7 +21,11 @@ const Loading = () => (
 
 const App = () => {
   // Check if we're on the pitch-deck subdomain
-  const isPitchDeckDomain = window.location.hostname.startsWith('pitchdeck.');
+  const isPitchDeckDomain = window.location.hostname === 'pitchdeck.valctrl.com';
+  const isMainDomain = window.location.hostname === 'valctrl.com' || window.location.hostname === 'www.valctrl.com';
+  
+  // For local development
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
   return (
     <TooltipProvider>
@@ -38,13 +42,16 @@ const App = () => {
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </>
-              ) : (
+              ) : isMainDomain || isLocalhost ? (
                 <>
                   <Route path="/" element={<Hero />} />
                   <Route path="/pitch-deck" element={<PitchDeck />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="*" element={<NotFound />} />
                 </>
+              ) : (
+                // Redirect unknown domains to the main site
+                <Route path="*" element={<Navigate to="https://valctrl.com" replace />} />
               )}
             </Routes>
           </Suspense>
