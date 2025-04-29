@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 
 interface SlideProps {
@@ -27,14 +28,20 @@ export const Slide = ({ imagePath, onError }: SlideProps) => {
     setIsLoaded(false);
     setErrorDetails(errorMsg);
     
-    const error = new Error(errorMsg);
-    onError?.(error);
+    if (onError) {
+      const error = new Error(errorMsg);
+      onError(error);
+    }
   }, [imagePath, onError]);
 
   useEffect(() => {
     setIsLoaded(false);
     setLoadError(false);
     setErrorDetails("");
+
+    // DEBUG: Log the image path we're trying to load
+    console.log('Slide attempting to load image:', imagePath);
+    console.log('Import.meta.env.BASE_URL:', import.meta.env.BASE_URL);
 
     if (!imagePath) {
       const error = "No image path provided";
@@ -44,9 +51,15 @@ export const Slide = ({ imagePath, onError }: SlideProps) => {
       return;
     }
     
-    console.log(`Attempting to load image: ${imagePath}`);
+    // Create a full URL by prepending the base URL if the path is relative
+    let fullPath = imagePath;
+    if (!imagePath.startsWith('http') && !imagePath.startsWith('/')) {
+      fullPath = `/${imagePath}`;
+    }
+    console.log(`Attempting to load image with path: ${fullPath}`);
+    
     const img = new Image();
-    img.src = imagePath;
+    img.src = fullPath;
     
     img.onload = handleImageLoad;
     img.onerror = (event) => {
@@ -75,6 +88,10 @@ export const Slide = ({ imagePath, onError }: SlideProps) => {
         <div className="text-red-500 text-xl mb-2">Failed to load slide</div>
         <div className="text-red-400 text-sm">{errorDetails}</div>
         <div className="text-gray-400 text-xs mt-2">Path: {imagePath}</div>
+        <div className="mt-4 p-2 bg-gray-800 rounded text-xs text-gray-300 max-w-md overflow-auto">
+          <pre>Base URL: {window.location.origin}</pre>
+          <pre>Attempted URL: {new URL(imagePath, window.location.origin).href}</pre>
+        </div>
       </div>
     );
   }

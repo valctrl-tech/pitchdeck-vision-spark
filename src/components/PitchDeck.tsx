@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -5,6 +6,7 @@ import { SlideNavigation } from "./pitch-deck/SlideNavigation";
 import { Slide } from "./pitch-deck/Slide";
 import { getAllSlides } from "@/services/slideStructure";
 import type { SlideInfo } from "@/types/pitch-deck";
+import { toast } from "@/hooks/use-toast";
 
 const PitchDeck = () => {
   const navigate = useNavigate();
@@ -20,10 +22,26 @@ const PitchDeck = () => {
   // Memoize the current slide data to prevent unnecessary re-renders
   const currentSlideData = allSlides[currentSlide - 1];
 
+  // Log for debugging
+  useEffect(() => {
+    console.log('PitchDeck mounted');
+    console.log('Current slide data:', currentSlideData);
+    console.log('Image path:', currentSlideData?.imagePath);
+    
+    return () => {
+      console.log('PitchDeck unmounted');
+    };
+  }, [currentSlideData]);
+
   const handleError = useCallback((error: Error) => {
     if (unmountingRef.current) return;
     console.error('Pitch deck error:', error);
     setError('An error occurred while displaying the slide. Please try refreshing the page.');
+    toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive"
+    });
   }, []);
 
   const handleClose = useCallback(() => {
