@@ -7,39 +7,6 @@ const Privacy = () => {
           
           <div className="prose prose-invert max-w-none">
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#00E5E5] mb-4">Cookie Policy</h2>
-              <p className="text-gray-300 mb-4">
-                Our website uses cookies to enhance your browsing experience. Cookies are small text files that are placed on your device when you visit our website. We use both first-party and third-party cookies for the following purposes:
-              </p>
-              <ul className="list-disc pl-6 text-gray-300 space-y-2">
-                <li>Essential cookies: Required for basic website functionality</li>
-                <li>Analytics cookies: Help us understand how visitors use our website</li>
-                <li>Preference cookies: Remember your settings and choices</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#00E5E5] mb-4">Your Cookie Choices</h2>
-              <p className="text-gray-300 mb-4">
-                You have multiple layers of control over cookies and tracking on our website:
-              </p>
-              <ul className="list-disc pl-6 text-gray-300 space-y-2">
-                <li>
-                  <strong>Browser Controls:</strong> Modern browsers like Chrome provide built-in privacy controls that let you manage third-party cookies and tracking across all websites you visit.
-                </li>
-                <li>
-                  <strong>Site-Specific Settings:</strong> Through our cookie consent banner, you can choose which types of cookies you accept on our website specifically.
-                </li>
-                <li>
-                  <strong>Manual Management:</strong> You can always view and delete cookies through your browser settings at any time.
-                </li>
-              </ul>
-              <p className="text-gray-300 mt-4">
-                If you choose to decline non-essential cookies or use browser privacy controls, core website functionality will still work, but some enhanced features may be limited.
-              </p>
-            </section>
-
-            <section className="mb-8">
               <h2 className="text-2xl font-semibold text-[#00E5E5] mb-4">Data Collection and Usage</h2>
               <p className="text-gray-300 mb-4">
                 We collect and process your personal data only with your consent or where we have legitimate interests to do so. The data we collect may include:

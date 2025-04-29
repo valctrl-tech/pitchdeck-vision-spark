@@ -5,7 +5,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy } from 'react';
 import Navbar from "@/components/Navbar";
 import PitchDeck from "@/components/PitchDeck";
-import CookieConsent from "@/components/CookieConsent";
 
 // Lazy load components
 const Hero = lazy(() => import("@/components/Hero"));
@@ -55,7 +54,6 @@ const App = () => {
               )}
             </Routes>
           </Suspense>
-          <CookieConsent />
         </div>
       </BrowserRouter>
     </TooltipProvider>
