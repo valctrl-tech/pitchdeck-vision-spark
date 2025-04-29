@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -118,8 +117,8 @@ const PitchDeck = () => {
           e.preventDefault();
         }
 
-        // Only handle events if we're on the pitch-deck route
-        if (location.pathname !== '/pitch-deck' || isClosing || isTransitioning) return;
+        // Handle events for both root and /pitch-deck routes
+        if (!['/pitch-deck', '/'].includes(location.pathname) || isClosing || isTransitioning) return;
 
         switch (e.key) {
           case 'ArrowLeft':

@@ -22,25 +22,21 @@ const Loading = () => (
 const App = () => {
   // Check if we're on the pitch-deck subdomain
   const isPitchDeckDomain = window.location.hostname.startsWith('pitchdeck.');
-  
-  // Only use the basename in production
-  const basename = import.meta.env.DEV ? '/' : '/pitchdeck-vision-spark';
 
   return (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename={basename}>
+      <BrowserRouter>
         <div className="min-h-screen bg-[#1A1F2C]">
           <Navbar />
           <Suspense fallback={<Loading />}>
             <Routes>
               {isPitchDeckDomain ? (
                 <>
-                  <Route path="/" element={<Navigate to="/pitch-deck" replace />} />
-                  <Route path="/pitch-deck" element={<PitchDeck />} />
+                  <Route path="/" element={<PitchDeck />} />
                   <Route path="/privacy" element={<Privacy />} />
-                  <Route path="*" element={<Navigate to="/pitch-deck" replace />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
                 </>
               ) : (
                 <>
